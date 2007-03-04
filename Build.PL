@@ -11,10 +11,10 @@ my $build = new Module::Build
       requires    => { 'Wx'                    => 0.61,
                        'Wx::AUI'               => 0,
                        'Wx::STC'               => 0,
-                       'Class::Accessor::Fast' => 0.30,
+                       'Class::Accessor'       => 0.27,
                        'Class::Publisher'      => 0.20,
                        'Devel::ebug'           => 0.46,
-                       'Module::Pluggable'     => 3.50,
+                       'Module::Pluggable'     => 3.10,
                        },
       create_makefile_pl => 'passthrough',
     );
