@@ -1,8 +1,7 @@
 package Devel::ebug::Plugin::Wx;
 
 use strict;
-use warnings;
-use Exporter 'import';
+use base qw(Exporter);
 
 our @EXPORT = qw(break_points_file stack_trace_folded);
 
