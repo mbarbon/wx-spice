@@ -1,0 +1,4 @@
+Revision history for Perl extension Devel::ebug::Wx.
+
+0.01  Sun Mar  4 17:21:25 CET 2007
+	- Added wxSystemOptions (thanks to Mark Dootson).
