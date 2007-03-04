@@ -1,6 +1,8 @@
 Build.PL
 MANIFEST
 MANIFEST.SKIP
+META.yml
+Makefile.PL
 bin/ebug_wx
 lib/Devel/ebug/Backend/Plugin/Wx.pm
 lib/Devel/ebug/Plugin/Wx.pm
@@ -16,5 +18,4 @@ lib/Devel/ebug/Wx/View/Code/STC.pm
 lib/Devel/ebug/Wx/View/Code/STC.pm
 lib/Devel/ebug/Wx/View/Eval.pm
 lib/Devel/ebug/Wx/View/StackTrace.pm
-Makefile.PL
-META.yml
+t/001_load.t
