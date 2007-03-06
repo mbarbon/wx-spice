@@ -54,7 +54,7 @@ sub AUTOLOAD {
 
 sub load_program {
     my( $self, $argv ) = @_;
-    $self->{argv} = $argv || [];
+    $self->{argv} = $argv || $self->{argv} || [];
     my $filename = join ' ', @{$self->argv};
 
     unless ($filename) {
