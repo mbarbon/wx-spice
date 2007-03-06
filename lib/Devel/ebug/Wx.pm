@@ -110,7 +110,11 @@ for example for code-viewing, configuration, gui management, view management
 optionally save the whole debugger state,
 state is distributed among plugins
 
-=item * handle the cases when the program is terminated
+=item * handle the cases when the debugged program is terminated
+
+=item * break on subroutine, undo, watchpoints
+
+=item * show pad, show package variables, show packages
 
 =item * see the FIXMEs
 

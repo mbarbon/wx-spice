@@ -4,7 +4,9 @@ Revision history for Perl extension Devel::ebug::Wx.
 	- Save window state between debugging sessions.
 	- Add a 'service' concept and introduce ViewManager
 	  and Configuration services.
-	- Add "File -> Load file" command.
+	- Add "File -> Load file" and "Run -> Restart" commands.
+	- Load all breakpoints when displaying the relative view.
+	- Add view to show console output and a real expression eval view.
 	
 0.01  Sun Mar  4 17:21:25 CET 2007
 	- First public release.
