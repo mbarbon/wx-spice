@@ -1,6 +1,6 @@
 Revision history for Perl extension Devel::ebug::Wx.
 
-0.02
+0.02  Tue Mar  6 23:48:59 CET 2007
 	- Save window state between debugging sessions.
 	- Add a 'service' concept and introduce ViewManager
 	  and Configuration services.
