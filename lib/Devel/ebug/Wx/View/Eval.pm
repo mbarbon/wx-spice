@@ -5,10 +5,10 @@ package Devel::ebug::Wx::View::Eval;
 use strict;
 use base qw(Wx::Panel Devel::ebug::Wx::View::Base);
 
-__PACKAGE__->mk_accessors( qw(display input) );
+__PACKAGE__->mk_accessors( qw(display input display_mode) );
 
 use Wx qw(:textctrl :sizer);
-use Wx::Event qw(EVT_TEXT_ENTER);
+use Wx::Event qw(EVT_BUTTON);
 
 sub tag         { 'eval' }
 sub description { 'Eval' }
@@ -17,25 +17,53 @@ sub new {
     my( $class, $parent, $wxebug ) = @_;
     my $self = $class->SUPER::new( $parent, -1 );
 
-    $self->SetSize( 300, 200 );
-
+    $self->SetSize( 300, 200 ); # FIXME absolute sizing sucks
     $self->wxebug( $wxebug );
-
-    $self->{display} = Wx::TextCtrl->new( $self, -1, "", [-1,-1], [-1, 150],
-                                        wxTE_MULTILINE|wxTE_READONLY );
     $self->{input} = Wx::TextCtrl->new( $self, -1, "", [-1,-1], [-1,-1],
-                                        wxTE_PROCESS_ENTER );
+                                        wxTE_MULTILINE );
+    $self->{display} = Wx::TextCtrl->new( $self, -1, "", [-1,-1], [-1, -1],
+                                        wxTE_MULTILINE );
+    $self->{display_mode} = Wx::Choice->new( $self, -1 );
+
+    $self->display_mode->Append( @$_ )
+      foreach [ 'YAML', 'use YAML; Dump(%s)' ],
+              [ 'Data::Dumper', 'use Data::Dumper; Dumper(%s)' ],
+              [ 'Plain', '%s' ];
+    my $eval = Wx::Button->new( $self, -1, 'Eval' );
+    my $clear_eval = Wx::Button->new( $self, -1, 'Clear eval' );
+    my $clear_result = Wx::Button->new( $self, -1, 'Clear result' );
 
     my $sz = Wx::BoxSizer->new( wxVERTICAL );
+    my $b  = Wx::BoxSizer->new( wxHORIZONTAL );
+    $sz->Add( $self->input, 1, wxGROW );
     $sz->Add( $self->display, 1, wxGROW );
-    $sz->Add( $self->input, 0, wxGROW );
+    $b->Add( $eval, 0, wxALL, 2 );
+    $b->Add( $clear_eval, 0, wxALL, 2 );
+    $b->Add( $clear_result, 0, wxALL, 2 );
+    $b->Add( $self->display_mode, 1, wxALL, 2 );
+    $sz->Add( $b, 0, wxGROW );
     $self->SetSizer( $sz );
 
-    EVT_TEXT_ENTER( $self, $self->input, sub { $self->DoCommand } );
     $self->register_view;
+
+    EVT_BUTTON( $self, $eval, sub { $self->_eval } );
+    EVT_BUTTON( $self, $clear_eval, sub { $self->input->Clear } );
+    EVT_BUTTON( $self, $clear_result, sub { $self->display->Clear } );
 
     return $self;
 }
+
+sub _eval {
+    my( $self ) = @_;
+
+    my $mode = $self->display_mode->GetClientData
+                   ( $self->display_mode->GetSelection );
+    my $expr = $self->input->GetValue;
+    my $v = $self->ebug->eval( sprintf $mode, $expr ) || "";
+    $self->display->WriteText( $v );
+}
+
+=pod
 
 sub print {
     my( $self, $string ) = @_;
@@ -58,38 +86,7 @@ sub DoCommand {
     $command = "q" if not defined $command;
     $command = $last_command if ($command eq "");
 
-    if ($command =~ /[?h]/) {
-      $self->print( 'Commands:
-      
-      b Calc::fib)
-      e Eval Perl code and print the result (eg: e $x+$y)
-      o Output (show STDOUT, STDERR)
-      p Show pad
-    art Restart the program
-      u Undo (eg: u, u 4)
-      w Set a watchpoint (eg: w $t > 10)
-      x Dump a variable using YAML (eg: x $object)
-    ');
-    } elsif ($command eq 'p') {
-      my $pad = $ebug->pad_human;
-      foreach my $k (sort keys %$pad) {
-        my $v = $pad->{$k};
-        $self->print( "  $k = $v;\n" );
-      }
-    } elsif ($command eq 'o') {
-      my($stdout, $stderr) = $ebug->output;
-      $self->print( "STDOUT:\n$stdout\n" );
-      $self->print( "STDERR:\n$stderr\n" );
-    } elsif ($command eq 'restart') {
-      $ebug->load;
-    } elsif ($command =~ /^ret ?(.*)/) {
-      $ebug->return($1);
-    } elsif ($command =~ /^b (.+)/) {
-      $ebug->break_point_subroutine($1);
-    } elsif ($command =~ /^w (.+)/) {
-      my($watch_point) = $command =~ /^w (.+)/;
-      $ebug->watch_point($watch_point);
-    } elsif ($command =~ /^x (.+)/) {
+    if ($command =~ /^x (.+)/) {
       my $v = $ebug->eval("use YAML; Dump($1)") || "";
       $self->print( "$v\n" );
     } elsif ($command =~ /^e (.+)/) {
@@ -101,5 +98,7 @@ sub DoCommand {
     }
     $last_command = $command;
 }
+
+=cut
 
 1;

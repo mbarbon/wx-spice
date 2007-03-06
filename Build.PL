@@ -15,6 +15,7 @@ my $build = new Module::Build
                        'Class::Publisher'      => 0.20,
                        'Devel::ebug'           => 0.46,
                        'Module::Pluggable'     => 3.10,
+                       'YAML'                  => 0,
                        },
       create_makefile_pl => 'passthrough',
       no_index           => { package =>
