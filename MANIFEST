@@ -13,6 +13,9 @@ lib/Devel/ebug/Wx/Command/ShowFile.pm
 lib/Devel/ebug/Wx/Command/Standard.pm
 lib/Devel/ebug/Wx/Command/Views.pm
 lib/Devel/ebug/Wx/Publisher.pm
+lib/Devel/ebug/Wx/Service/Configuration.pm
+lib/Devel/ebug/Wx/Service/ViewManager.pm
+lib/Devel/ebug/Wx/ServiceManager.pm
 lib/Devel/ebug/Wx/View/Base.pm
 lib/Devel/ebug/Wx/View/Breakpoints.pm
 lib/Devel/ebug/Wx/View/Code/STC.pm

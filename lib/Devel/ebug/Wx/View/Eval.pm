@@ -32,6 +32,7 @@ sub new {
     $self->SetSizer( $sz );
 
     EVT_TEXT_ENTER( $self, $self->input, sub { $self->DoCommand } );
+    $self->register_view;
 
     return $self;
 }

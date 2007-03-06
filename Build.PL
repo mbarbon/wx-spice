@@ -17,6 +17,10 @@ my $build = new Module::Build
                        'Module::Pluggable'     => 3.10,
                        },
       create_makefile_pl => 'passthrough',
+      no_index           => { package =>
+                              [ 'Devel::ebug::Backend::Plugin::ActionPoints',
+                                ],
+                              },
     );
 
 $build->create_build_script;

@@ -1,6 +1,10 @@
 Revision history for Perl extension Devel::ebug::Wx.
 
 0.02
-
+	- Save window state between debugging sessions.
+	- Add a 'service' concept and introduce ViewManager
+	  and Configuration services.
+	- Add "File -> Load file" command.
+	
 0.01  Sun Mar  4 17:21:25 CET 2007
-	- Added wxSystemOptions (thanks to Mark Dootson).
+	- First public release.

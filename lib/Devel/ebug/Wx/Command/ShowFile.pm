@@ -25,7 +25,7 @@ sub show_file {
       ( $wx, "File to display", "Choose a file", $files );
 
     if( $dlg->ShowModal == wxID_OK ) {
-        $wx->code->show_code_for_file( $dlg->GetStringSelection );
+        $wx->code_display_service->show_code_for_file( $dlg->GetStringSelection );
     }
 
     $dlg->Destroy;

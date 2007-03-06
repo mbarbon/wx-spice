@@ -18,9 +18,10 @@ sub new {
     $self->SetSize( 300, 400 ); # FIXME: absolute sizing is bad
 
     $self->wxebug( $wxebug );
-    $self->set_stacktrace;
+    $self->set_stacktrace if $self->ebug->line;
 
     $self->subscribe_ebug( 'state_changed', sub { $self->_read_stack( @_ ) } );
+    $self->register_view;
 
     EVT_LISTBOX( $self, $self, \&_lbox_click );
 
@@ -39,14 +40,14 @@ sub _lbox_click {
     return unless $e->IsSelection; # skip deselections
     my $to = $e->GetClientData;
 
-    $self->wxebug->code->highlight_line( $to->[0], $to->[1] );
+    $self->wxebug->code_display_service
+         ->highlight_line( $to->[0], $to->[1] );
 }
 
 # FIXME incremental read of stacktrace
 sub set_stacktrace {
     my( $self ) = @_;
     my @frames = $self->ebug->stack_trace_folded;
-
     $self->Clear;
     foreach my $frame ( @frames ) {
         my $string = sprintf '%s: %d %s(%s)',

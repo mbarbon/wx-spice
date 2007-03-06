@@ -22,6 +22,7 @@ sub new {
 
     $self->subscribe_ebug( 'break_point', sub { $self->_add_bp( @_ ) } );
     $self->subscribe_ebug( 'break_point_delete', sub { $self->_del_bp( @_ ) } );
+    $self->register_view;
 
     my $sizer = Wx::BoxSizer->new( wxVERTICAL );
     $self->SetSizer( $sizer );
@@ -31,6 +32,7 @@ sub new {
     return $self;
 }
 
+# FIXME ordering and duplicates
 sub _add_bp {
     my( $self, $ebug, $event, %params ) = @_;
 
@@ -70,7 +72,8 @@ sub delete {
 sub go_to {
     my( $self, $pane ) = @_;
 
-    $self->wxebug->code->highlight_line( $pane->file, $pane->line );
+    $self->wxebug->code_display_service
+         ->highlight_line( $pane->file, $pane->line );
 }
 
 sub set_condition {

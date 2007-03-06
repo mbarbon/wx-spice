@@ -8,6 +8,7 @@ use lib 'lib';
 use Devel::ebug::Wx;
 
 my $app = Wx::SimpleApp->new;
+$app->SetAppName( 'ebug_wx' );
 my $wx = Devel::ebug::Wx->new( { argv => \@ARGV } );
 $wx->Show;
 $app->MainLoop;

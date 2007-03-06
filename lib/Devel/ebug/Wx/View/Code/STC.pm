@@ -173,8 +173,9 @@ sub _setup_stc {
 
     EVT_STC_MARGINCLICK( $self, $self, sub { $self->_set_bp( $_[1] ) } );
     EVT_CHAR( $self, sub {
-                  $self->wxebug->handle_key( $_[1]->GetKeyCode );
+                  $self->wxebug->command_manager_service->handle_key( $_[1]->GetKeyCode );
               } );
+    # FIXME add context menu
     EVT_RIGHT_UP( $self, sub {
                       warn $_[1]->GetX, ' ', $_[1]->GetY;
                       warn $self->GetMarginWidth( 1 );

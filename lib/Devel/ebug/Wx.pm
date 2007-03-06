@@ -10,49 +10,40 @@ our $VERSION = '0.02';
 
 use Wx qw(:aui);
 use Wx::AUI;
-use Wx::Event qw(EVT_CLOSE EVT_MENU);
+use Wx::Event qw(EVT_CLOSE);
 
-use Devel::ebug;
-use Devel::ebug::Wx::View::Code::STC;
 use Devel::ebug::Wx::Publisher;
+use Devel::ebug::Wx::ServiceManager;
 
-use Module::Pluggable
-      sub_name    => 'commands',
-      search_path => 'Devel::ebug::Wx::Command',
-      require     => 1;
-
-__PACKAGE__->mk_ro_accessors( qw(code ebug key_map manager pane_info) );
+__PACKAGE__->mk_ro_accessors( qw(ebug service_manager) );
 
 sub new {
     my( $class, $args ) = @_;
     my $self = $class->SUPER::new( undef, -1, 'wxebug', [-1, -1], [-1, 500] );
 
-    $self->{ebug} = Devel::ebug::Wx::Publisher->new( Devel::ebug->new );
-    $self->{code} = Devel::ebug::Wx::View::Code::STC->new( $self, $self );
-    $self->{manager} = Wx::AuiManager->new;
-    $self->manager->SetManagedWindow( $self );
+    EVT_CLOSE( $self, \&_on_close );
 
-    $self->{pane_info} = Wx::AuiPaneInfo->new
-        ->CenterPane->TopDockable->BottomDockable->LeftDockable->RightDockable
-        ->Floatable->Movable->PinButton->CaptionVisible->Resizable
-        ->CloseButton->DestroyOnClose;
-    $self->manager->AddPane
-      ( $self->code, $self->pane_info->Name( 'source_code' )
-        ->Caption( 'Code' ) );
+    $self->{ebug} = Devel::ebug::Wx::Publisher->new;
+    $self->{service_manager} = Devel::ebug::Wx::ServiceManager->new;
 
     $self->ebug->add_subscriber( 'load_program', sub { $self->_pgm_load( @_ ) } );
+    $self->service_manager->initialize( $self );
+    $self->service_manager->load_state;
+
+    $self->SetMenuBar( $self->command_manager_service->get_menu_bar );
 
     $self->ebug->load_program( $args->{argv} );
 
-    EVT_CLOSE( $self, sub { $self->Destroy } );
-
-    my( $key_map, $menu_tree ) = $self->_setup_commands;
-    $self->_build_menu( $menu_tree );
-    $self->{key_map} = $key_map;
-
-    $self->manager->Update;
-
     return $self;
+}
+
+sub get_service { $_[0]->service_manager->get_service( $_[0], $_[1] ) }
+
+sub _on_close {
+    my( $self ) = @_;
+
+    $self->service_manager->finalize( $self );
+    $self->Destroy;
 }
 
 sub _pgm_load {
@@ -61,69 +52,13 @@ sub _pgm_load {
     $self->SetTitle( $params{filename} );
 }
 
-sub _build_menu {
-    my( $self, $menu_tree ) = @_;
-
-    my $mbar = Wx::MenuBar->new;
-
-    foreach my $rv ( sort { $a->{priority} <=> $b->{priority} }
-                          values %$menu_tree ) {
-        my $menu = Wx::Menu->new;
-        my $prev_pri = 0;
-        foreach my $item ( sort { $a->{priority} <=> $b->{priority} }
-                                @{$rv->{childs}} ) {
-            if( $prev_pri && $item->{priority} != $prev_pri ) {
-                $menu->AppendSeparator;
-            }
-            my $label = $item->{key} ?
-                            sprintf( "%s\t%s", $item->{label}, $item->{key} ) :
-                            $item->{label};
-            EVT_MENU( $self, $menu->Append( -1, $label ),
-                      $item->{sub} );
-            $prev_pri = $item->{priority};
-        }
-        $mbar->Append( $menu, $rv->{label} );
-    }
-
-    $self->SetMenuBar( $mbar );
-}
-
-sub _setup_commands {
-    my( $self ) = @_;
-    my @commands = $self->commands;
-    my( %key_map, %menu_tree, %cmds );
-
-    # FIXME: duplicates?
-    %cmds = map $_->register_commands,
-            grep $_->can( 'register_commands' ),
-                 @commands;
-    foreach my $id ( grep $cmds{$_}{key}, keys %cmds ) {
-        $key_map{$cmds{$id}{key}} = $cmds{$id};
-    }
-    foreach my $id ( grep $cmds{$_}{tag}, keys %cmds ) {
-        $menu_tree{$cmds{$id}{tag}} = { childs   => [],
-                                        priority => 0,
-                                        %{$cmds{$id}},
-                                        };
-    }
-    foreach my $id ( grep $cmds{$_}{menu}, keys %cmds ) {
-        die "Unknown menu: $cmds{$id}{menu}"
-          unless $menu_tree{$cmds{$id}{menu}};
-        push @{$menu_tree{$cmds{$id}{menu}}{childs}}, { priority => 0,
-                                                        %{$cmds{$id}},
-                                                        };
-    }
-
-    return ( \%key_map, \%menu_tree );
-}
-
-sub handle_key {
-    my( $self, $code ) = @_;
-    my $char = chr( $code );
-
-    if( my $cmd = $self->key_map->{$char} ) {
-        $cmd->{sub}->( $self );
-    }
+# remap ->xxx_yy_service to ->get_service( 'xxx_yy' )
+our $AUTOLOAD;
+sub AUTOLOAD {
+    my $self = shift;
+    return if $AUTOLOAD =~ /::DESTROY$/;
+    ( my $sub = $AUTOLOAD ) =~ s/.*::(\w+)_service$/$1/;
+    return $self->get_service( $1 );
 }
 
 1;
@@ -158,13 +93,22 @@ to dock/undock and arrange views.
 
 =over 4
 
-=item * make a saner interface for plugins (esp. commands)
+=item * make a saner interface for plugins
 
-=item * define a service interface (for example for code-viewing, configuration)
+what do commands do,
+views have gui state that needs saving,
+global state of the debugger gui
+
+=item * define a service interface
+
+for example for code-viewing, configuration, gui management, view management
 
 =item * add more views (variable watch, data structure display)
 
-=item * save GUI status between sessions, optionally save the whole debugger status
+=item * save GUI state between sessions
+
+optionally save the whole debugger state,
+state is distributed among plugins
 
 =item * handle the cases when the program is terminated
 
