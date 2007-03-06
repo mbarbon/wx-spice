@@ -4,24 +4,41 @@ use strict;
 use warnings;
 
 use Devel::ebug::Backend::Plugin::ActionPoints;
+use Devel::ebug::Backend::Plugin::Filenames;
 
 sub register_commands {
     return
       ( break_points_file => { sub => \&break_points_file },
+        all_break_points  => { sub => \&all_break_points },
         );
+}
+
+sub all_break_points {
+    my( $req, $context ) = @_;
+    my $files = Devel::ebug::Backend::Plugin::Filenames::filenames
+                    ( $req, $context );
+    my @break_points;
+    foreach my $file ( sort @{$files->{filenames}} ) {
+        *DB::dbline = $main::{ '_<' . $file };
+        push @break_points,
+             map  { [ $file, $_, $DB::dbline{$_} ] }
+             sort { $a <=> $b }
+             grep { $DB::dbline{$_} }
+                  keys %DB::dbline;
+    }
+    return { break_points => \@break_points };
 }
 
 sub break_points_file {
     my( $req, $context ) = @_;
     use vars qw(@dbline %dbline);
     *DB::dbline = $main::{ '_<' . $req->{filename} };
-    my $break_points =
-      [ map { [ $_, $DB::dbline{$_} ] }
-        sort { $a <=> $b }
-        grep { $DB::dbline{$_} }
-        keys %DB::dbline
-        ];
-    return { break_points => $break_points };
+    my @break_points =
+      map { [ $_, $DB::dbline{$_} ] }
+      sort { $a <=> $b }
+      grep { $DB::dbline{$_} }
+           keys %DB::dbline;
+    return { break_points => \@break_points };
 }
 
 # FIXME: this is nasty, but works as a temporary measure
