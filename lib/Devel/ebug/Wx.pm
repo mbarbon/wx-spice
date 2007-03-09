@@ -86,7 +86,7 @@ The core is a publisher/subscriber wrapper around L<Devel::ebug>
 commands and keyboard bindings (L<Devel::ebug::Wx::Command::*>) and
 views (L<Devel::ebug::Wx::View::*>).
 
-The wxWidgets Advanced User Interface is used, so it is possible
+The wxWidgets Advanced User Interface (AUI) is used, so it is possible
 to dock/undock and arrange views.
 
 =head1 TODO
@@ -107,6 +107,7 @@ for example for code-viewing, configuration, gui management, view management
 
 =item * save GUI state between sessions
 
+save frame sizes/positioning
 optionally save the whole debugger state,
 state is distributed among plugins
 

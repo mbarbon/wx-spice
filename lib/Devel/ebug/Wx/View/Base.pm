@@ -8,6 +8,7 @@ __PACKAGE__->mk_accessors( qw(wxebug _has_destroy _subscribed) );
 # not yet in wxPerl
 sub EVT_DESTROY($$$) { $_[0]->Connect( $_[1], -1, &Wx::wxEVT_DESTROY, $_[2] ) }
 
+# FIXME correctly handle closing a view, either destory or allow reshowing
 sub register_view {
     my( $self ) = @_;
 
