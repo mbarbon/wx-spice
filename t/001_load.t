@@ -1,8 +1,10 @@
 #!/usr/bin/perl -w
 
 use strict;
-use Test::More tests => 3;
+use Test::UseAllModules;
 
-use_ok( 'Devel::ebug::Wx' );
-use_ok( 'Devel::ebug::Plugin::Wx' );
-use_ok( 'Devel::ebug::Backend::Plugin::Wx' );
+BEGIN {
+    all_uses_ok();
+}
+
+exit 0;

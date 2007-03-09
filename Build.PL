@@ -17,6 +17,8 @@ my $build = new Module::Build
                        'Module::Pluggable'     => 3.10,
                        'YAML'                  => 0,
                        },
+      build_requires => { 'Test::UseAllModules' => 0,
+                          },
       create_makefile_pl => 'passthrough',
       no_index           => { package =>
                               [ 'Devel::ebug::Backend::Plugin::ActionPoints',
