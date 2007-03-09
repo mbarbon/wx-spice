@@ -1,7 +1,5 @@
 package Devel::ebug::Wx::View::Eval;
 
-# FIXME: need to kill the cruft below and build a real eval window
-
 use strict;
 use base qw(Wx::Panel Devel::ebug::Wx::View::Base);
 
@@ -29,6 +27,7 @@ sub new {
       foreach [ 'YAML', 'use YAML; Dump(%s)' ],
               [ 'Data::Dumper', 'use Data::Dumper; Dumper(%s)' ],
               [ 'Plain', '%s' ];
+    $self->display_mode->SetSelection( 0 ); # FIXME save last
     my $eval = Wx::Button->new( $self, -1, 'Eval' );
     my $clear_eval = Wx::Button->new( $self, -1, 'Clear eval' );
     my $clear_result = Wx::Button->new( $self, -1, 'Clear result' );
@@ -62,43 +61,5 @@ sub _eval {
     my $v = $self->ebug->eval( sprintf $mode, $expr ) || "";
     $self->display->WriteText( $v );
 }
-
-=pod
-
-sub print {
-    my( $self, $string ) = @_;
-
-    $self->display->WriteText( $string );
-}
-
-my $last_command = "s";
-
-sub DoCommand {
-    my $self = shift;
-    my $ebug = $self->ebug;
-
-    if ($ebug->finished) {
-      $self->print( "ebug: Program finished. Enter 'restart' or 'q'\n" );
-    }
-
-    my $command = $self->input->GetValue;
-    $self->input->Clear;
-    $command = "q" if not defined $command;
-    $command = $last_command if ($command eq "");
-
-    if ($command =~ /^x (.+)/) {
-      my $v = $ebug->eval("use YAML; Dump($1)") || "";
-      $self->print( "$v\n" );
-    } elsif ($command =~ /^e (.+)/) {
-      my $v = $ebug->eval($1) || "";
-      $self->print( "$v\n" );
-    } elsif ($command) {
-      my $v = $ebug->eval($command) || "";
-      $self->print( "$v\n" );
-    }
-    $last_command = $command;
-}
-
-=cut
 
 1;
