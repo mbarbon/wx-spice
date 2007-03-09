@@ -15,6 +15,8 @@ use constant { CURRENT_LINE => 2,
                BACKGROUND   => 3,
                };
 
+sub tag { 'code_stc' }
+
 sub new {
     my( $class, $parent, $wxebug ) = @_;
     my $self = $class->SUPER::new( $parent, -1 );

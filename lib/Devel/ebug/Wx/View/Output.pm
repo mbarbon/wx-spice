@@ -41,6 +41,8 @@ sub new {
 
     EVT_BUTTON( $self, $refresh, sub { $self->load_output } );
 
+    $self->register_view;
+
     return $self;
 }
 
