@@ -6,12 +6,14 @@ sub register_commands {
     my( $class, $wxebug ) = @_;
     my @commands;
 
-    foreach my $view ( $wxebug->view_manager_service->views ) {
+    my $viewmanager = $wxebug->view_manager_service;
+    foreach my $view ( $viewmanager->views ) {
         my $cmd = sub {
             my( $wx ) = @_;
 
+            return if $viewmanager->has_view( $view->tag );
             my $instance = $view->new( $wx, $wx );
-            $wxebug->view_manager_service->create_pane_and_update
+            $viewmanager->create_pane_and_update
               ( $instance, { name    => $view->tag,
                              float   => 1,
                              caption => $view->description,
