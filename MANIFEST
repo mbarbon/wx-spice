@@ -5,7 +5,9 @@ MANIFEST.SKIP
 META.yml
 Makefile.PL
 bin/ebug_wx
+lib/Devel/ebug/Backend/Plugin/EvalLevel.pm
 lib/Devel/ebug/Backend/Plugin/Wx.pm
+lib/Devel/ebug/Plugin/EvalLevel.pm
 lib/Devel/ebug/Plugin/Wx.pm
 lib/Devel/ebug/Wx.pm
 lib/Devel/ebug/Wx/Command/Run.pm
@@ -13,6 +15,9 @@ lib/Devel/ebug/Wx/Command/ShowFile.pm
 lib/Devel/ebug/Wx/Command/Standard.pm
 lib/Devel/ebug/Wx/Command/Views.pm
 lib/Devel/ebug/Wx/Publisher.pm
+lib/Devel/ebug/Wx/Service/Base.pm
+lib/Devel/ebug/Wx/Service/CodeDisplay.pm
+lib/Devel/ebug/Wx/Service/CommandManager.pm
 lib/Devel/ebug/Wx/Service/Configuration.pm
 lib/Devel/ebug/Wx/Service/ViewManager.pm
 lib/Devel/ebug/Wx/ServiceManager.pm
@@ -21,5 +26,8 @@ lib/Devel/ebug/Wx/View/Breakpoints.pm
 lib/Devel/ebug/Wx/View/Code/STC.pm
 lib/Devel/ebug/Wx/View/Code/STC.pm
 lib/Devel/ebug/Wx/View/Eval.pm
+lib/Devel/ebug/Wx/View/Expressions.pm
+lib/Devel/ebug/Wx/View/Output.pm
 lib/Devel/ebug/Wx/View/StackTrace.pm
 t/001_load.t
+t/zzz_pod.t
