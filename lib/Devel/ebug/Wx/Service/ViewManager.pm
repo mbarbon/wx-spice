@@ -3,6 +3,38 @@ package Devel::ebug::Wx::Service::ViewManager;
 use strict;
 use base qw(Devel::ebug::Wx::Service::Base);
 
+=head1 NAME
+
+Devel::ebug::Wx - GUI interface for your (d)ebugging needs
+
+=head1 SYNOPSIS
+
+  my $vm = ...->get_service( 'view_manager' );
+  my $bool = $vm->has_view( $tag );
+  $vm->register_view( $view );
+  $vm->unregister_view( $view );
+
+  # both don't call ->register_view()
+  $vm->create_pane( $view, { name    => $tag,
+                             caption => 'Displayed name',
+                             float   => 1,
+                             } );
+  $vm->create_pane_and_update( ... ); # like ->create_pane()
+
+  my @view_classes = Devel::ebug::Wx::Service::ViewManager->views;
+
+=head1 DESCRIPTION
+
+The C<view_manager> service manages windows (views) using the
+wxWidgets Advanced User Interface (AUI).  The service automatically
+manages saving/restoring the state and layout of registered views.
+Unregistered views are allowed but their state is not preserved
+between sessions.
+
+=head1 METHODS
+
+=cut
+
 use Module::Pluggable
       sub_name    => 'views',
       search_path => 'Devel::ebug::Wx::View',
@@ -16,13 +48,14 @@ sub service_name { 'view_manager' }
 sub initialize {
     my( $self, $wxebug ) = @_;
 
-    $self->{wxebug} = $wxebug;
-    $self->{manager} = Wx::AuiManager->new;
-    $self->{active_views} = [];
+    $self->wxebug( $wxebug );
+    $self->manager( Wx::AuiManager->new );
+    $self->active_views( {} );
     $self->views; # force loading of views
 
     $self->manager->SetManagedWindow( $wxebug );
 
+    # default Pane Info
     $self->{pane_info} = Wx::AuiPaneInfo->new
         ->CenterPane->TopDockable->BottomDockable->LeftDockable->RightDockable
         ->Floatable->Movable->PinButton->CaptionVisible->Resizable
@@ -34,7 +67,8 @@ sub save_state {
 
     my $cfg = $self->wxebug->configuration_service->get_config( 'view_manager' );
     $cfg->Write( 'aui_perspective', $self->manager->SavePerspective );
-    $cfg->Write( 'views', join ',', map ref( $_ ), @{$self->active_views} );
+    $cfg->Write( 'views', join ',', map ref( $_ ),
+                                        values %{$self->active_views} );
 }
 
 sub load_state {
@@ -52,17 +86,67 @@ sub load_state {
     $self->manager->Update;
 }
 
+=head2 has_view
+
+  my $active = $vm->has_view( $tag );
+
+Return C<true> if a view vith the given tag is currently shown and managed
+by the view manager.
+
+=cut
+
+sub has_view {
+    my( $self, $tag ) = @_;
+
+    return exists $self->active_views->{$tag} ? 1 : 0;
+}
+
+=head2 register_view
+
+  $vm->register_view( $view );
+
+Registers a view with the view manager.  Please notice that at any
+given time only one view can be registered with the service with a
+given tag.
+
+=cut
+
 sub register_view {
     my( $self, $view ) = @_;
 
-    push @{$self->active_views}, $view;
+    $self->active_views->{$view->tag} = $view;
 }
+
+=head2 unregister_view
+
+  $vm->unregister_view( $view );
+
+Unregisters the view from the view manager.
+
+=cut
 
 sub unregister_view {
     my( $self, $view ) = @_;
 
-    $self->{active_views} = [ grep $_ ne $view, @{$self->active_views} ];
+    delete $self->active_views->{$view->tag};
 }
+
+=head2 create_pane
+
+=head2 create_pane_and_update
+
+  $vm->create_pane( $view, { name    => 'view_tag',
+                             caption => 'Pane title',
+                             float   => 1,
+                             } );
+  $vm->create_pane_and_update( ... );
+
+Both functions create a floatable pane containing C<$window>;
+C<create_pane_and_update> also causes the pane to be shown.  Neither
+function calls C<register_view> to register the view with the view
+manager.
+
+=cut
 
 sub create_pane_and_update {
     my( $self, @args ) = @_;
@@ -80,5 +164,13 @@ sub create_pane {
     $pane_info->Float if $info->{float};
     $self->manager->AddPane( $window, $pane_info );
 }
+
+=head2 views
+
+    my @view_classes = Devel::ebug::Wx::Service::ViewManager->views;
+
+Returns a list of view classes known to the view manager.
+
+=cut
 
 1;
