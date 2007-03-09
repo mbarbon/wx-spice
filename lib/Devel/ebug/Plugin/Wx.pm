@@ -5,6 +5,8 @@ use base qw(Exporter);
 
 our @EXPORT = qw(break_points_file all_break_points stack_trace_folded);
 
+use Devel::StackTrace;
+
 # list break points
 sub all_break_points {
     my( $self ) = @_;
