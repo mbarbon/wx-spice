@@ -4,14 +4,14 @@ use strict;
 use base qw(Class::Accessor::Fast);
 
 use Module::Pluggable
-      sub_name    => 'services',
+      sub_name    => '_services',
       search_path => 'Devel::ebug::Wx::Service',
-      require     => 1,
-      except      => qr/::Base$/;
+      require     => 1;
 
 __PACKAGE__->mk_ro_accessors( qw(_active_services _wxebug) );
 
 sub active_services { @{$_[0]->_active_services} }
+sub services { grep !$_->abstract, $_[0]->_services }
 
 sub new {
     my( $class ) = @_;

@@ -5,6 +5,7 @@ use base qw(Devel::ebug::Wx::View::Base);
 
 __PACKAGE__->mk_accessors( qw(_tag _index) );
 
+sub abstract     { $_[0] eq __PACKAGE__ }
 sub is_multiview { 1 }
 
 sub description {

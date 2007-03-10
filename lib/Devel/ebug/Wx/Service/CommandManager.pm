@@ -6,8 +6,7 @@ use base qw(Devel::ebug::Wx::Service::Base);
 use Module::Pluggable
       sub_name    => 'commands',
       search_path => 'Devel::ebug::Wx::Command',
-      require     => 1,
-      except      => qr/::Base$/;
+      require     => 1;
 
 __PACKAGE__->mk_accessors( qw(wxebug key_map _menu_tree) );
 
@@ -68,7 +67,7 @@ sub _setup_commands {
     # FIXME: duplicates?
     # FIXME: passing $self is hack
     # FIXME allow plugins that are service, command and view
-    %cmds = map $_->register_commands( $self->wxebug ),
+    %cmds = map  $_->register_commands( $self->wxebug ),
             grep $_->can( 'register_commands' ),
                  @commands;
     foreach my $id ( grep $cmds{$_}{key}, keys %cmds ) {

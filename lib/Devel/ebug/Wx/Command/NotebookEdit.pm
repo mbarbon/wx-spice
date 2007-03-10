@@ -1,4 +1,4 @@
-package Devel::ebug::Wx::Command::Views;
+package Devel::ebug::Wx::Command::NotebookEdit;
 
 use strict;
 

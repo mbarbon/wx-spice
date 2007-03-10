@@ -38,13 +38,14 @@ between sessions.
 =cut
 
 use Module::Pluggable
-      sub_name    => 'views',
+      sub_name    => '_views',
       search_path => 'Devel::ebug::Wx::View',
       require     => 1,
-      # FIXME requires a saner method
-      except      => qr/::Base$|::Multi$|::View::Code::|::SUPER/;
+      except      => qr/::Code::|::SUPER$/;
 
 __PACKAGE__->mk_accessors( qw(wxebug active_views manager pane_info) );
+
+sub views { grep !$_->abstract, $_[0]->_views }
 
 sub service_name { 'view_manager' }
 
