@@ -41,7 +41,8 @@ use Module::Pluggable
       sub_name    => 'views',
       search_path => 'Devel::ebug::Wx::View',
       require     => 1,
-      except      => qr/::Base$|::View::Code::|::SUPER/;
+      # FIXME requires a saner method
+      except      => qr/::Base$|::Multi$|::View::Code::|::SUPER/;
 
 __PACKAGE__->mk_accessors( qw(wxebug active_views manager pane_info) );
 
@@ -61,8 +62,7 @@ sub initialize {
     $self->{pane_info} = Wx::AuiPaneInfo->new
         ->CenterPane->TopDockable->BottomDockable->LeftDockable->RightDockable
         ->Floatable->Movable->PinButton->CaptionVisible->Resizable
-        ->CloseButton;
-    $self->{pane_info}->DestroyOnClose unless Wx->VERSION > 0.67;
+        ->CloseButton->DestroyOnClose( 0 );
 }
 
 sub save_state {
@@ -71,21 +71,28 @@ sub save_state {
     my $cfg = $self->wxebug->configuration_service->get_config( 'view_manager' );
     my( @xywh ) = ( $self->wxebug->GetPositionXY, $self->wxebug->GetSizeWH );
     $cfg->Write( 'aui_perspective', $self->manager->SavePerspective );
-    $cfg->Write( 'views', join ',', map ref( $_ ),
-                                        values %{$self->active_views} );
+    $cfg->Write( 'views', join ',', map  $_->serialize,
+                                    grep $_->is_managed,
+                                         $self->active_views_list );
     $cfg->Write( 'frame_geometry', sprintf '%d,%d,%d,%d', @xywh );
 }
 
 sub load_state {
     my( $self ) = @_;
 
+    # FIXME alignment between the AUI config and views
     my $cfg = $self->wxebug->configuration_service->get_config( 'view_manager' );
     my $profile = $cfg->Read( 'aui_perspective', '' );
     my $views = $cfg->Read( 'views', '' );
     foreach my $class ( split /,/, $views ) {
-        my $instance = $class->new( $self->wxebug, $self->wxebug );
-        my $pane_info = $self->pane_info->Name( $instance->tag );
-        $pane_info->DestroyOnClose unless Wx->VERSION > 0.67;
+        $class =~ /^([\w:]+)\((.*)\)$/ or next;
+        my $instance = $1->new( $self->wxebug, $self->wxebug );
+        $instance->load_state( $2 );
+        my $pane_info = $self->pane_info->Name( $instance->tag )
+            ->DestroyOnClose( 0 );
+        $pane_info->DestroyOnClose( 1 ) unless Wx->VERSION > 0.67;
+        $pane_info->DestroyOnClose( 1 ) if    $instance->can( 'is_multiview' )
+                                           && $instance->is_multiview;
         $self->manager->AddPane( $instance, $pane_info );
     }
 
@@ -97,6 +104,18 @@ sub load_state {
     }
 
     $self->manager->Update;
+}
+
+=head2 active_views_list
+
+  my @views = $vm->active_views_list;
+
+=cut
+
+sub active_views_list {
+    my( $self ) = @_;
+
+    return values %{$self->active_views};
 }
 
 =head2 has_view
@@ -152,6 +171,7 @@ sub unregister_view {
     my( $self, $view ) = @_;
 
     delete $self->active_views->{$view->tag};
+    $self->manager->DetachPane( $view ) unless $self->finalized;
 }
 
 =head2 create_pane
@@ -181,10 +201,12 @@ sub create_pane_and_update {
 sub create_pane {
     my( $self, $window, $info ) = @_;
 
-    my $pane_info = $self->pane_info
-                         ->Name( $info->{name} )
-                         ->Caption( $info->{caption} );
+    my $pane_info = $self->pane_info ->Name( $info->{name} )
+        ->Caption( $info->{caption} )->DestroyOnClose( 0 );
     $pane_info->Float if $info->{float};
+    $self->{pane_info}->DestroyOnClose( 1 ) unless Wx->VERSION > 0.67;
+    $pane_info->DestroyOnClose( 1 ) if    $window->can( 'is_multiview' )
+                                       && $window->is_multiview;
     $self->manager->AddPane( $window, $pane_info );
 }
 
@@ -216,10 +238,14 @@ sub hide_view {
     $self->manager->Update;
 }
 
+# FIXME needs to be smarter for Notebooks
 sub is_shown {
     my( $self, $tag ) = @_;
+    my $view = $self->get_view( $tag );
 
-    return $self->manager->GetPane( $tag )->IsShown;
+    return 1 if $view && !$view->is_managed;
+    return 0 unless $self->has_view( $tag );
+    return $self->manager->GetPane( $tag )->IsShown ? 1 : 0;
 }
 
 =head2 views

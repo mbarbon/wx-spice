@@ -22,9 +22,9 @@ sub register_commands {
             } else {
                 my $instance = $view->new( $wx, $wx );
                 $viewmanager->create_pane_and_update
-                  ( $instance, { name    => $tag,
+                  ( $instance, { name    => $instance->tag, # for multiviews
                                  float   => 1,
-                                 caption => $view->description,
+                                 caption => $instance->description,
                                  } );
             }
         };
