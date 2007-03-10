@@ -37,7 +37,7 @@ sub new {
     $sz->Add( $self->stderr, 1, wxGROW );
     $self->SetSizer( $sz );
 
-    $self->load_output;
+    $self->load_output if $wxebug->ebug->argv; # FIXME add is_running;
 
     EVT_BUTTON( $self, $refresh, sub { $self->load_output } );
 
