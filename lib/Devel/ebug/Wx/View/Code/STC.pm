@@ -121,52 +121,26 @@ sub _setup_stc {
     $self->StyleSetFont( wxSTC_STYLE_DEFAULT, $font );
     $self->StyleClearAll();
 
-    $self->StyleSetForeground(0, Wx::Colour->new(0x00, 0x00, 0x7f));
-    $self->StyleSetForeground(1,  Wx::Colour->new(0xff, 0x00, 0x00));
-
-    # 2 Comment line green
-    $self->StyleSetForeground(2,  Wx::Colour->new(0x00, 0x7f, 0x00));
-    $self->StyleSetForeground(3,  Wx::Colour->new(0x7f, 0x7f, 0x7f));
-
-    # 4 numbers
-    $self->StyleSetForeground(4,  Wx::Colour->new(0x00, 0x7f, 0x7f));
-    $self->StyleSetForeground(5,  Wx::Colour->new(0x00, 0x00, 0x7f));
-
-    # 6 string orange
-    $self->StyleSetForeground(6,  Wx::Colour->new(0xff, 0x7f, 0x00));
-
-    $self->StyleSetForeground(7,  Wx::Colour->new(0x7f, 0x00, 0x7f));
-
-    $self->StyleSetForeground(8,  Wx::Colour->new(0x00, 0x00, 0x00));
-
-    $self->StyleSetForeground(9,  Wx::Colour->new(0x7f, 0x7f, 0x7f));
-
-    # 10 operators dark blue
-    $self->StyleSetForeground(10, Wx::Colour->new(0x00, 0x00, 0x7f));
-
-    # 11 identifiers bright blue
-    $self->StyleSetForeground(11, Wx::Colour->new(0x00, 0x00, 0xff));
-
-    # 12 scalars purple
-    $self->StyleSetForeground(12, Wx::Colour->new(0x7f, 0x00, 0x7f));
-
-    # 13 array light blue
-    $self->StyleSetForeground(13, Wx::Colour->new(0x40, 0x80, 0xff));
-
-    # 17 matching regex red
-    $self->StyleSetForeground(17, Wx::Colour->new(0xff, 0x00, 0x7f));
-
-    # 18 substitution regex light olive
-    $self->StyleSetForeground(18, Wx::Colour->new(0x7f, 0x7f, 0x00));
-
-    #Set a style 12 bold
-    $self->StyleSetBold(12,  1);
-
-    # Apply tag style for selected lexer (blue)
-    $self->StyleSetSpec( wxSTC_H_TAG, "fore:#0000ff" );
+    $self->StyleSetSpec( wxSTC_PL_DEFAULT, 'fore:#00007f' );
+    $self->StyleSetSpec( wxSTC_PL_ERROR, 'fore:#ff0000' );
+    $self->StyleSetSpec( wxSTC_PL_COMMENTLINE, 'fore:#007f00' );
+    $self->StyleSetSpec( wxSTC_PL_COMMENTLINE, 'fore:#7f7f7f' );
+    $self->StyleSetSpec( wxSTC_PL_NUMBER, 'fore:#007f7f' );
+    $self->StyleSetSpec( wxSTC_PL_WORD, 'fore:#00007f' );
+    $self->StyleSetSpec( wxSTC_PL_STRING, 'fore:#ff7f00' );
+    $self->StyleSetSpec( wxSTC_PL_CHARACTER, 'fore:#7f007f' );
+    $self->StyleSetSpec( wxSTC_PL_PUNCTUATION, 'fore:#000000' );
+    $self->StyleSetSpec( wxSTC_PL_PREPROCESSOR, 'fore:#7f7f7f' );
+    $self->StyleSetSpec( wxSTC_PL_OPERATOR, 'fore:#00007f' );
+    $self->StyleSetSpec( wxSTC_PL_IDENTIFIER, 'fore:#00007f' );
+    $self->StyleSetSpec( wxSTC_PL_SCALAR, 'fore:#7f007f,bold' );
+    $self->StyleSetSpec( wxSTC_PL_ARRAY, 'fore:#4080ff,bold' );
+    $self->StyleSetSpec( wxSTC_PL_REGEX, 'fore:#ff007f' );
+    $self->StyleSetSpec( wxSTC_PL_REGSUBST, 'fore:#7f7f00' );
 
     $self->SetLexer( wxSTC_LEX_PERL );
 
+    # FIXME colors and markers configurable?
     $self->MarkerDefine( CURRENT_LINE, 2,  Wx::wxGREEN, Wx::wxNullColour );
     $self->MarkerDefine( BREAKPOINT  , 0,  Wx::wxBLUE, Wx::wxNullColour );
     $self->MarkerDefine( BACKGROUND  , 22, Wx::wxNullColour, Wx::Colour->new( 0x90, 0x90, 0x90 ) );
@@ -206,4 +180,3 @@ sub _set_bp {
 }
 
 1;
-
