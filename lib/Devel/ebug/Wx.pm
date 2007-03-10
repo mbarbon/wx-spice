@@ -106,12 +106,16 @@ allow enabling/dispabling services, commands, views
 
 =item * add more views (package browser)
 
-=item * notebooks!
+=item * configuration interface
 
-=item * save GUI state between sessions
+=item * notebooks
 
-optionally save the whole debugger state,
-state is distributed among plugins
+better editing interface
+better debugging, edge cases still present, esp. at load time
+views must ba able to serialize themselves (neetds a proper format)
+composite for notebooks (common base for notebook and viewmanager?)
+
+=item * allow saving debugger state between session
 
 =item * handle the cases when the debugged program is terminated
 
