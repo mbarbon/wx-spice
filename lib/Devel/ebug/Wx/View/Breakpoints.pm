@@ -28,11 +28,13 @@ sub new {
 
     $self->sizer( $sizer );
 
-    $self->_add_bp( $wxebug->ebug, undef,
-                    file      => $_->[0],
-                    line      => $_->[1],
-                    condition => $_->[2],
-                    ) foreach $wxebug->ebug->all_break_points;
+    if( $wxebug->ebug->argv ) { # FIXME add is_running
+        $self->_add_bp( $wxebug->ebug, undef,
+                        file      => $_->[0],
+                        line      => $_->[1],
+                        condition => $_->[2],
+                      ) foreach $wxebug->ebug->all_break_points;
+    }
 
     return $self;
 }
