@@ -8,23 +8,38 @@ sub register_commands {
 
     my $viewmanager = $wxebug->view_manager_service;
     foreach my $view ( $viewmanager->views ) {
+        my $tag = $view->tag;
         my $cmd = sub {
             my( $wx ) = @_;
 
-            # FIXME remove DestroyOnClose, use ->Show here
-            return if $viewmanager->has_view( $view->tag );
-            my $instance = $view->new( $wx, $wx );
-            $viewmanager->create_pane_and_update
-              ( $instance, { name    => $view->tag,
-                             float   => 1,
-                             caption => $view->description,
-                             } );
+            # show if present, recreate if not present
+            if( $viewmanager->has_view( $tag ) ) {
+                if( $viewmanager->is_shown( $tag ) ) {
+                    $viewmanager->hide_view( $tag );
+                } else {
+                    $viewmanager->show_view( $tag );
+                }
+            } else {
+                my $instance = $view->new( $wx, $wx );
+                $viewmanager->create_pane_and_update
+                  ( $instance, { name    => $tag,
+                                 float   => 1,
+                                 caption => $view->description,
+                                 } );
+            }
         };
-        push @commands, 'show_' . $view->tag,
-             { sub      => $cmd,
-               menu     => 'view',
-               label    => sprintf( "Show %s", $view->description ),
-               priority => 200,
+        my $update_ui = sub {
+            my( $wx, $event ) = @_;
+
+            $event->Check( $viewmanager->is_shown( $tag ) );
+        };
+        push @commands, 'show_' . $tag,
+             { sub         => $cmd,
+               menu        => 'view',
+               update_menu => $update_ui,
+               checkable   => 1,
+               label       => sprintf( "Show %s", $view->description ),
+               priority    => 200,
                };
     }
 
