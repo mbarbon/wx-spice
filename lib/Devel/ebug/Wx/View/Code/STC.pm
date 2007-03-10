@@ -2,6 +2,8 @@ package Devel::ebug::Wx::View::Code::STC;
 
 use Wx::STC;
 
+# FIXME split in a fully-fledged view linked to the code display service
+#       and a simple code-edit/display control
 use strict;
 use base qw(Wx::StyledTextCtrl Devel::ebug::Wx::View::Base);
 
@@ -124,7 +126,7 @@ sub _setup_stc {
     $self->StyleSetSpec( wxSTC_PL_DEFAULT, 'fore:#00007f' );
     $self->StyleSetSpec( wxSTC_PL_ERROR, 'fore:#ff0000' );
     $self->StyleSetSpec( wxSTC_PL_COMMENTLINE, 'fore:#007f00' );
-    $self->StyleSetSpec( wxSTC_PL_COMMENTLINE, 'fore:#7f7f7f' );
+    $self->StyleSetSpec( wxSTC_PL_POD, 'fore:#7f7f7f' );
     $self->StyleSetSpec( wxSTC_PL_NUMBER, 'fore:#007f7f' );
     $self->StyleSetSpec( wxSTC_PL_WORD, 'fore:#00007f' );
     $self->StyleSetSpec( wxSTC_PL_STRING, 'fore:#ff7f00' );
