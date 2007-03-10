@@ -12,6 +12,8 @@ sub service_name { 'code_display' }
 sub initialize {
     my( $self, $wxebug ) = @_;
 
+    # FIXME: event related to stepping/breakpointing should be
+    #        handled here, to allow the view to be used in the eval window
     $self->{code_display} = Devel::ebug::Wx::View::Code::STC->new
                                 ( $wxebug, $wxebug );
     $wxebug->view_manager_service->create_pane
@@ -20,8 +22,7 @@ sub initialize {
                                } );
 }
 
-# forward to view
-# FIXME: declare the view as service
+# FIXME: implement here!
 sub highlight_line { shift->code_display->highlight_line( @_ ) }
 sub show_code_for_file { shift->code_display->show_code_for_file( @_ ) }
 

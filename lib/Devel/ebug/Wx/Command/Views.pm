@@ -11,6 +11,7 @@ sub register_commands {
         my $cmd = sub {
             my( $wx ) = @_;
 
+            # FIXME remove DestroyOnClose, use ->Show here
             return if $viewmanager->has_view( $view->tag );
             my $instance = $view->new( $wx, $wx );
             $viewmanager->create_pane_and_update

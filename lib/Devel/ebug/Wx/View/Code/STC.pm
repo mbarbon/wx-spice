@@ -112,6 +112,7 @@ sub highlight_line {
     $self->highlighted_line( $line );
 }
 
+# FIXME make it configurable with a default
 sub _setup_stc {
     my( $self ) = @_;
     my $font = Wx::Font->new( 10, wxTELETYPE, wxNORMAL, wxNORMAL );
@@ -173,6 +174,7 @@ sub _setup_stc {
     $self->SetReadOnly( 1 );
     $self->SetMarginSensitive( 1, 1 );
 
+    # FIXME: move to code display service
     EVT_STC_MARGINCLICK( $self, $self, sub { $self->_set_bp( $_[1] ) } );
     EVT_CHAR( $self, sub {
                   $self->wxebug->command_manager_service->handle_key( $_[1]->GetKeyCode );

@@ -95,15 +95,19 @@ to dock/undock and arrange views.
 
 =item * make a saner interface for plugins
 
-what do commands do,
+what do commands do; better registration interface
 views have gui state that needs saving,
 global state of the debugger gui
+allow generic plugins to be views/commands/services at the same time?
 
 =item * define a service interface
 
 for example for code-viewing, configuration, gui management, view management
+allow enabling/dispabling services, commands, views
 
-=item * add more views (variable watch, data structure display)
+=item * add more views (package browser)
+
+=item * notebooks!
 
 =item * save GUI state between sessions
 
