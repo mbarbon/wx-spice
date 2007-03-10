@@ -7,6 +7,7 @@ __PACKAGE__->mk_ro_accessors( qw() );
 
 sub service_name { 'configuration' }
 sub initialized  { 1 }
+sub finalized    { 0 }
 
 sub new {
     my( $class, $wxebug ) = @_;

@@ -44,6 +44,11 @@ sub finalize {
 
     # distinguish between explicit and implicit state saving?
     $_->save_state foreach $self->active_services;
+    foreach my $service ( $self->active_services ) {
+        next if $service->finalized;
+        $service->finalize;
+        $service->finalized( 1 );
+    }
 }
 
 sub get_service {
