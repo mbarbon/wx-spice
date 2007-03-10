@@ -3,6 +3,8 @@ package Devel::ebug::Wx::Service::ViewManager;
 use strict;
 use base qw(Devel::ebug::Wx::Service::Base);
 
+use Wx::AUI;
+
 =head1 NAME
 
 Devel::ebug::Wx - GUI interface for your (d)ebugging needs
@@ -59,7 +61,8 @@ sub initialize {
     $self->{pane_info} = Wx::AuiPaneInfo->new
         ->CenterPane->TopDockable->BottomDockable->LeftDockable->RightDockable
         ->Floatable->Movable->PinButton->CaptionVisible->Resizable
-        ->CloseButton->DestroyOnClose;
+        ->CloseButton;
+    $self->{pane_info}->DestroyOnClose unless Wx->VERSION > 0.67;
 }
 
 sub save_state {
@@ -79,7 +82,9 @@ sub load_state {
     my $views = $cfg->Read( 'views', '' );
     foreach my $class ( split /,/, $views ) {
         my $instance = $class->new( $self->wxebug, $self->wxebug );
-        $self->manager->AddPane( $instance, $self->pane_info->Name( $instance->tag )->DestroyOnClose );
+        my $pane_info = $self->pane_info->Name( $instance->tag );
+        $pane_info->DestroyOnClose unless Wx->VERSION > 0.67;
+        $self->manager->AddPane( $instance, $pane_info );
     }
 
     $self->manager->LoadPerspective( $profile ) if $profile;
@@ -88,10 +93,14 @@ sub load_state {
 
 =head2 has_view
 
-  my $active = $vm->has_view( $tag );
+=head2 get_view
 
-Return C<true> if a view vith the given tag is currently shown and managed
-by the view manager.
+  my $is_active = $vm->has_view( $tag );
+  my $view = $vm->get_view( $tag );
+
+C<has_view> returns C<true> if a view vith the given tag is currently
+shown and managed by the view manager; in this case C<get_view> can be
+used to retrieve the view.
 
 =cut
 
@@ -99,6 +108,12 @@ sub has_view {
     my( $self, $tag ) = @_;
 
     return exists $self->active_views->{$tag} ? 1 : 0;
+}
+
+sub get_view {
+    my( $self, $tag ) = @_;
+
+    return $self->active_views->{$tag};
 }
 
 =head2 register_view
@@ -163,6 +178,40 @@ sub create_pane {
                          ->Caption( $info->{caption} );
     $pane_info->Float if $info->{float};
     $self->manager->AddPane( $window, $pane_info );
+}
+
+=head2 show_view
+
+=head2 hide_view
+
+  $vm->show_view( $tag );
+  $vm->hide_view( $tag );
+  my $shown = $vm->is_shown( $tag );
+
+=cut
+
+sub show_view {
+    my( $self, $tag ) = @_;
+
+    $self->manager->GetPane( $tag )->Show;
+    $self->manager->Update;
+}
+
+sub hide_view {
+    my( $self, $tag ) = @_;
+
+    if( Wx->VERSION > 0.67 ) {
+        $self->manager->GetPane( $tag )->Hide;
+    } else {
+        $self->manager->GetPane( $tag )->Destroy;
+    }
+    $self->manager->Update;
+}
+
+sub is_shown {
+    my( $self, $tag ) = @_;
+
+    return $self->manager->GetPane( $tag )->IsShown;
 }
 
 =head2 views
