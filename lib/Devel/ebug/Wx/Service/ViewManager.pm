@@ -79,7 +79,7 @@ sub load_state {
     my $views = $cfg->Read( 'views', '' );
     foreach my $class ( split /,/, $views ) {
         my $instance = $class->new( $self->wxebug, $self->wxebug );
-        $self->manager->AddPane( $instance, Wx::AuiPaneInfo->new->Name( $instance->tag ) );
+        $self->manager->AddPane( $instance, $self->pane_info->Name( $instance->tag )->DestroyOnClose );
     }
 
     $self->manager->LoadPerspective( $profile ) if $profile;

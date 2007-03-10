@@ -8,23 +8,29 @@ __PACKAGE__->mk_accessors( qw(wxebug _has_destroy _subscribed) );
 # not yet in wxPerl
 sub EVT_DESTROY($$$) { $_[0]->Connect( $_[1], -1, &Wx::wxEVT_DESTROY, $_[2] ) }
 
-# FIXME correctly handle closing a view, either destory or allow reshowing
-sub register_view {
+sub _setup_destroy {
     my( $self ) = @_;
-
-    $self->wxebug->view_manager_service->register_view( $self );
-}
-
-sub subscribe_ebug {
-    my( $self, $event, $handler ) = @_;
-
-    $self->ebug->add_subscriber( $event, $handler );
 
     unless( $self->_has_destroy ) {
         $self->_subscribed( [] );
         $self->_has_destroy( 1 );
         EVT_DESTROY( $self, $self, \&_on_destroy );
     }
+}
+
+# FIXME correctly handle closing a view, either destroy or allow reshowing
+sub register_view {
+    my( $self ) = @_;
+
+    $self->_setup_destroy;
+    $self->wxebug->view_manager_service->register_view( $self );
+}
+
+sub subscribe_ebug {
+    my( $self, $event, $handler ) = @_;
+
+    $self->_setup_destroy;
+    $self->ebug->add_subscriber( $event, $handler );
     push @{$self->_subscribed}, [ $event, $handler ];
 }
 
