@@ -33,7 +33,7 @@ my %no_notify =
    map { $_ => 1 }
        qw(program line subroutine package filename codeline
           filenames break_points codelines pad finished
-          break_points_file);
+          is_running);
 
 our $AUTOLOAD;
 sub AUTOLOAD {
@@ -50,6 +50,12 @@ sub AUTOLOAD {
         $self->_notify_basic_changes unless $no_notify{$sub};
         return $res;
     }
+}
+
+sub is_running {
+    my( $self ) = @_;
+
+    return $self->argv && !$self->ebug->finished;
 }
 
 sub load_program {

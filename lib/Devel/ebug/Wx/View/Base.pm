@@ -18,7 +18,8 @@ sub _setup_destroy {
     }
 }
 
-# FIXME correctly handle closing a view, either destroy or allow reshowing
+sub default_size { return ( 350, 250 ) }
+
 sub register_view {
     my( $self ) = @_;
 

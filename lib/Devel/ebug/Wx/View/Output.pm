@@ -15,7 +15,6 @@ sub new {
     my( $class, $parent, $wxebug ) = @_;
     my $self = $class->SUPER::new( $parent, -1 );
 
-    $self->SetSize( 300, 200 ); # FIXME absolute sizing sucks
     $self->wxebug( $wxebug );
     $self->{stdout} = Wx::TextCtrl->new( $self, -1, "", [-1,-1], [-1, -1],
                                          wxTE_MULTILINE|wxTE_READONLY );
@@ -37,11 +36,12 @@ sub new {
     $sz->Add( $self->stderr, 1, wxGROW );
     $self->SetSizer( $sz );
 
-    $self->load_output if $wxebug->ebug->argv; # FIXME add is_running;
+    $self->load_output if $wxebug->ebug->is_running;
 
     EVT_BUTTON( $self, $refresh, sub { $self->load_output } );
 
     $self->register_view;
+    $self->SetSize( $self->default_size );
 
     return $self;
 }

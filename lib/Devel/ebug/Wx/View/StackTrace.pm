@@ -6,7 +6,7 @@ use base qw(Wx::ListBox Devel::ebug::Wx::View::Base);
 use File::Basename;
 
 use Wx qw(:sizer);
-use Wx::Event qw(EVT_LISTBOX EVT_CLOSE);
+use Wx::Event qw(EVT_LISTBOX);
 
 sub tag         { 'stack' }
 sub description { 'Stack' }
@@ -15,8 +15,6 @@ sub new {
     my( $class, $parent, $wxebug ) = @_;
     my $self = $class->SUPER::new( $parent, -1 );
 
-    $self->SetSize( 300, 400 ); # FIXME: absolute sizing is bad
-
     $self->wxebug( $wxebug );
     $self->set_stacktrace if $self->ebug->line;
 
@@ -24,6 +22,8 @@ sub new {
     $self->register_view;
 
     EVT_LISTBOX( $self, $self, \&_lbox_click );
+
+    $self->SetSize( $self->default_size );
 
     return $self;
 }

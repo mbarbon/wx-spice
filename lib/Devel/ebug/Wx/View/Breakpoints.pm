@@ -14,8 +14,6 @@ sub new {
     my( $class, $parent, $wxebug ) = @_;
     my $self = $class->SUPER::new( $parent, -1 );
 
-    $self->SetSize( 300, 200 ); # FIXME: absolute sizing is bad
-
     $self->wxebug( $wxebug );
     $self->panes( [] );
 
@@ -28,13 +26,15 @@ sub new {
 
     $self->sizer( $sizer );
 
-    if( $wxebug->ebug->argv ) { # FIXME add is_running
+    if( $wxebug->ebug->is_running ) {
         $self->_add_bp( $wxebug->ebug, undef,
                         file      => $_->[0],
                         line      => $_->[1],
                         condition => $_->[2],
                       ) foreach $wxebug->ebug->all_break_points;
     }
+
+    $self->SetSize( $self->default_size );
 
     return $self;
 }

@@ -17,9 +17,7 @@ sub new {
     my( $class, $parent, $wxebug ) = @_;
     my $self = $class->SUPER::new( $parent, -1 );
 
-    $self->SetSize( 300, 200 ); # FIXME absolute sizing sucks
     $self->wxebug( $wxebug );
-
     $self->expressions( [] );
     $self->{tree} = Wx::TreeCtrl->new( $self, -1, [-1,-1], [-1,-1],
                                        wxTR_HIDE_ROOT|wxTR_HAS_BUTTONS );
@@ -45,6 +43,8 @@ sub new {
     EVT_BUTTON( $self, $add, sub { 
                     $self->add_expression( $expression->GetValue );
                 } );
+
+    $self->SetSize( $self->default_size );
 
     return $self;
 }
