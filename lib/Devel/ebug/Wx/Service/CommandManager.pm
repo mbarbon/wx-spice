@@ -11,7 +11,8 @@ use Module::Pluggable
 
 __PACKAGE__->mk_accessors( qw(wxebug key_map _menu_tree) );
 
-use Wx::Event qw(EVT_MENU);
+use Wx qw(:menu);
+use Wx::Event qw(EVT_MENU EVT_UPDATE_UI);
 
 sub service_name { 'command_manager' }
 
@@ -45,8 +46,12 @@ sub _build_menu {
             my $label = $item->{key} ?
                             sprintf( "%s\t%s", $item->{label}, $item->{key} ) :
                             $item->{label};
-            EVT_MENU( $self->wxebug, $menu->Append( -1, $label ),
-                      $item->{sub} );
+            my $style = $item->{checkable} ? wxITEM_CHECK : wxITEM_NORMAL;
+            my $mitem = $menu->Append( -1, $label, '', $style );
+            EVT_MENU( $self->wxebug, $mitem, $item->{sub} );
+            if( $item->{update_menu} ) {
+                EVT_UPDATE_UI( $self->wxebug, $mitem, $item->{update_menu} );
+            }
             $prev_pri = $item->{priority};
         }
         $mbar->Append( $menu, $rv->{label} );
