@@ -40,9 +40,12 @@ sub quit {
 sub about {
     my( $wx ) = @_;
 
-    Wx::MessageBox( "wxebug, (c) 2007 Mattia Barbon\n" .
-                    "wxPerl $Wx::VERSION, " . wxVERSION_STRING,
-                    "About wxebug", wxOK, $wx );
+    my $message = sprintf <<EOT,
+ebug_wx %s, (c) 2007 Mattia Barbon
+wxPerl %s, %s
+EOT
+        Devel::ebug::Wx->VERSION, $Wx::VERSION, wxVERSION_STRING;
+    Wx::MessageBox( $message, "About wxebug", wxOK, $wx );
 }
 
 sub load_file {
