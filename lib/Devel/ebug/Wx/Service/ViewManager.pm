@@ -69,9 +69,11 @@ sub save_state {
     my( $self ) = @_;
 
     my $cfg = $self->wxebug->configuration_service->get_config( 'view_manager' );
+    my( @xywh ) = ( $self->wxebug->GetPositionXY, $self->wxebug->GetSizeWH );
     $cfg->Write( 'aui_perspective', $self->manager->SavePerspective );
     $cfg->Write( 'views', join ',', map ref( $_ ),
                                         values %{$self->active_views} );
+    $cfg->Write( 'frame_geometry', sprintf '%d,%d,%d,%d', @xywh );
 }
 
 sub load_state {
@@ -88,6 +90,12 @@ sub load_state {
     }
 
     $self->manager->LoadPerspective( $profile ) if $profile;
+
+    my( @xywh ) = split ',', $cfg->Read( 'frame_geometry', ',,,' );
+    if( length $xywh[0] ) {
+        $self->wxebug->SetSize( @xywh );
+    }
+
     $self->manager->Update;
 }
 

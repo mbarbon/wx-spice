@@ -110,7 +110,6 @@ allow enabling/dispabling services, commands, views
 
 =item * save GUI state between sessions
 
-save frame sizes/positioning
 optionally save the whole debugger state,
 state is distributed among plugins
 
