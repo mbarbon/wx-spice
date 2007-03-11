@@ -6,6 +6,7 @@ Revision history for Perl extension Devel::ebug::Wx.
 	- Begin documenting the various services.
 	- Fix some bugs in view handling, and improve behaviour.
 	- Use Alt+key intead of a single key for accelerators.
+	- Display breakpoints ordered by file and line.
 
 0.02  Tue Mar  6 23:48:59 CET 2007
 	- Save window state between debugging sessions.
