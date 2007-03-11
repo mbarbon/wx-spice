@@ -1,6 +1,6 @@
 Revision history for Perl extension Devel::ebug::Wx.
 
-0.03
+0.03  Sun Mar 11 18:40:45 CET 2007
 	- Add expression display and console output views.
 	- Allow putting multiple views in a notebook to save space.
 	- Begin documenting the various services.
