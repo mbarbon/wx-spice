@@ -7,7 +7,7 @@ use Wx::AUI;
 
 =head1 NAME
 
-Devel::ebug::Wx - GUI interface for your (d)ebugging needs
+Devel::ebug::Wx::Service::ViewManager - manage view docking/undocking
 
 =head1 SYNOPSIS
 
