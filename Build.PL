@@ -15,13 +15,16 @@ my $build = new Module::Build
                        'Class::Publisher'      => 0.20,
                        'Devel::ebug'           => 0.46,
                        'Module::Pluggable'     => 3.10,
-                       'YAML'                  => 0,
+                       'YAML'                  => 0.60,
+                       'Config::IniFiles'      => 2.00,
+                       'File::UserConfig'      => 0.04,
                        },
       build_requires => { 'Test::UseAllModules' => 0,
                           },
       create_makefile_pl => 'passthrough',
       no_index           => { package =>
                               [ 'Devel::ebug::Backend::Plugin::ActionPoints',
+                                'DB',
                                 ],
                               },
     );

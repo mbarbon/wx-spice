@@ -71,11 +71,11 @@ sub save_state {
 
     my $cfg = $self->wxebug->configuration_service->get_config( 'view_manager' );
     my( @xywh ) = ( $self->wxebug->GetPositionXY, $self->wxebug->GetSizeWH );
-    $cfg->Write( 'aui_perspective', $self->manager->SavePerspective );
-    $cfg->Write( 'views', join ',', map  $_->serialize,
-                                    grep $_->is_managed,
-                                         $self->active_views_list );
-    $cfg->Write( 'frame_geometry', sprintf '%d,%d,%d,%d', @xywh );
+    $cfg->set_value( 'aui_perspective', $self->manager->SavePerspective );
+    $cfg->set_value( 'views', join ',', map  $_->serialize,
+                                        grep $_->is_managed,
+                                             $self->active_views_list );
+    $cfg->set_value( 'frame_geometry', sprintf '%d,%d,%d,%d', @xywh );
 }
 
 sub load_state {
@@ -83,8 +83,8 @@ sub load_state {
 
     # FIXME alignment between the AUI config and views
     my $cfg = $self->wxebug->configuration_service->get_config( 'view_manager' );
-    my $profile = $cfg->Read( 'aui_perspective', '' );
-    my $views = $cfg->Read( 'views', '' );
+    my $profile = $cfg->get_value( 'aui_perspective', '' );
+    my $views = $cfg->get_value( 'views', '' );
     foreach my $class ( split /,/, $views ) {
         $class =~ /^([\w:]+)\((.*)\)$/ or next;
         my $instance = $1->new( $self->wxebug, $self->wxebug );
@@ -99,7 +99,7 @@ sub load_state {
 
     $self->manager->LoadPerspective( $profile ) if $profile;
 
-    my( @xywh ) = split ',', $cfg->Read( 'frame_geometry', ',,,' );
+    my( @xywh ) = split ',', $cfg->get_value( 'frame_geometry', ',,,' );
     if( length $xywh[0] ) {
         $self->wxebug->SetSize( @xywh );
     }

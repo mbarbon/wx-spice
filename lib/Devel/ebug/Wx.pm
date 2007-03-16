@@ -6,7 +6,7 @@ use strict;
 use warnings;
 use base qw(Wx::Frame Class::Accessor::Fast);
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 use Wx qw(:aui);
 use Wx::Event qw(EVT_CLOSE);
@@ -112,7 +112,7 @@ allow enabling/dispabling services, commands, views
 
 better editing interface
 better debugging, edge cases still present, esp. at load time
-views must ba able to serialize themselves (neetds a proper format)
+views must be able to serialize themselves (needs a proper format)
 composite for notebooks (common base for notebook and viewmanager?)
 
 =item * allow saving debugger state between session

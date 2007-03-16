@@ -3,27 +3,127 @@ package Devel::ebug::Wx::Service::Configuration;
 use strict;
 use base qw(Devel::ebug::Wx::Service::Base);
 
-__PACKAGE__->mk_ro_accessors( qw() );
+=head1 NAME
+
+Devel::ebug::Wx::Service::Configuration - manage ebugger configuration
+
+=head1 SYNOPSIS
+
+  my $cm = ...->get_service( 'configuration' );
+  my $cfg = $cm->get_config( 'service_name' );
+
+  my $value_or_default = $cfg->get_value( 'value_name', $value_default );
+  $cfg->set_value( 'value_name', $value );
+  $cfg->delete_value( 'value_name' );
+
+=head1 DESCRIPTION
+
+The C<configuration> service manages the global configuration for all
+services.
+
+=head1 METHODS
+
+=cut
+
+__PACKAGE__->mk_ro_accessors( qw(inifile) );
+
+use File::UserConfig;
+use Config::IniFiles;
+use File::Spec;
 
 sub service_name { 'configuration' }
 sub initialized  { 1 }
 sub finalized    { 0 }
 
-# FIXME need a backend that can store multiline data for serialization
-sub new {
-    my( $class, $wxebug ) = @_;
+sub file_name {
+    my( $class ) = @_;
+    my $dir = File::UserConfig->new( dist     => 'ebug_wx',
+                                     sharedir => '.',
+                                     )->configdir;
 
-    return $class;
+    return File::Spec->catfile( $dir, 'ebug_wx.ini' );
 }
 
+sub new {
+    my( $class, $wxebug ) = @_;
+    my $self = $class->SUPER::new;
+    my $file = $class->file_name;
+
+    if( -f $file ) {
+        $self->{inifile} = Config::IniFiles->new( -file => $file );
+    } else {
+        $self->{inifile} = Config::IniFiles->new;
+        $self->inifile->SetFileName( $file );
+    }
+
+    return $self;
+}
+
+=head2 get_config
+
+  my $cfg = $cm->get_config( 'service_name' );
+
+  my $value_or_default = $cfg->get_value( 'value_name', $value_default );
+  $cfg->set_value( 'value_name', $value );
+  $cfg->delete_value( 'value_name' );
+
+Returns an object that can be used to read/change/delete the value of
+the configuration keys for a given service.
+
+=cut
+
 sub get_config {
-    my( $class, $section ) = @_;
+    my( $self, $section ) = @_;
 
-    my $cfg = Wx::ConfigBase::Get;
-    # FIXME validate
-    $cfg->SetPath( "/$section" );
+    return Devel::ebug::Wx::Service::Configuration::My->new( $self->inifile,
+                                                             $section );
+}
 
-    return $cfg;
+sub finalize {
+    my( $self ) = @_;
+
+    $self->inifile->RewriteConfig if $self->inifile;
+}
+
+package Devel::ebug::Wx::Service::Configuration::My;
+
+use strict;
+use base qw(Class::Accessor::Fast);
+
+__PACKAGE__->mk_ro_accessors( qw(inifile section) );
+
+sub abstract { 1 }
+
+sub new {
+    my( $class, $inifile, $section ) = @_;
+    my $self = $class->SUPER::new
+      ( { inifile   => $inifile,
+          section   => $section,
+          } );
+
+    return $self;
+}
+
+sub get_value {
+    my( $self, $name, $default ) = @_;
+
+    return $self->inifile->val( $self->section, $name, $default );
+}
+
+sub set_value {
+    my( $self, $name, @values ) = @_;
+
+    unless( $self->inifile->setval( $self->section, $name, @values ) ) {
+        $self->inifile->newval( $self->section, $name, @values );
+    }
+
+    return;
+}
+
+sub delete_value {
+    my( $self, $name ) = @_;
+
+    $self->inifile->delval( $self->section, $name );
 }
 
 1;
