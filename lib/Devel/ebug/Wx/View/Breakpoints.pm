@@ -11,7 +11,7 @@ sub tag         { 'breakpoints' }
 sub description { 'Breakpoints' }
 
 sub new {
-    my( $class, $parent, $wxebug ) = @_;
+    my( $class, $parent, $wxebug, $layout_state ) = @_;
     my $self = $class->SUPER::new( $parent, -1 );
 
     $self->wxebug( $wxebug );
@@ -19,6 +19,7 @@ sub new {
 
     $self->subscribe_ebug( 'break_point', sub { $self->_add_bp( @_ ) } );
     $self->subscribe_ebug( 'break_point_delete', sub { $self->_del_bp( @_ ) } );
+    $self->set_layout_state( $layout_state ) if $layout_state;
     $self->register_view;
 
     my $sizer = Wx::BoxSizer->new( wxVERTICAL );

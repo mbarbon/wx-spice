@@ -12,7 +12,7 @@ sub tag         { 'output' }
 sub description { 'Console output' }
 
 sub new {
-    my( $class, $parent, $wxebug ) = @_;
+    my( $class, $parent, $wxebug, $layout_state ) = @_;
     my $self = $class->SUPER::new( $parent, -1 );
 
     $self->wxebug( $wxebug );
@@ -40,6 +40,7 @@ sub new {
 
     EVT_BUTTON( $self, $refresh, sub { $self->load_output } );
 
+    $self->set_layout_state( $layout_state ) if $layout_state;
     $self->register_view;
     $self->SetSize( $self->default_size );
 

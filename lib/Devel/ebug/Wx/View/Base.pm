@@ -23,13 +23,14 @@ sub is_managed   { !$_[0]->GetParent->isa( 'Wx::AuiNotebook' ) }
 sub is_multiview { 0 }
 sub default_size { ( 350, 250 ) }
 sub abstract     { $_[0] eq __PACKAGE__ }
-# FIXME implement a saner serialization scheme!
-sub save_state   { '' }
-sub load_state   { }
-sub serialize    {
+
+# save/restore view layout
+sub set_layout_state { }
+sub get_layout_state {
     my( $self ) = @_;
 
-    return sprintf "%s(%s)", ref( $self ), $self->save_state;
+    return { class => ref( $self ),
+             };
 }
 
 sub register_view {

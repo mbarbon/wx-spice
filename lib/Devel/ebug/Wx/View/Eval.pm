@@ -12,7 +12,7 @@ sub tag         { 'eval' }
 sub description { 'Eval' }
 
 sub new {
-    my( $class, $parent, $wxebug ) = @_;
+    my( $class, $parent, $wxebug, $layout_state ) = @_;
     my $self = $class->SUPER::new( $parent, -1 );
 
     $self->wxebug( $wxebug );
@@ -42,6 +42,7 @@ sub new {
     $sz->Add( $b, 0, wxGROW );
     $self->SetSizer( $sz );
 
+    $self->set_layout_state( $layout_state ) if $layout_state;
     $self->register_view;
 
     EVT_BUTTON( $self, $eval, sub { $self->_eval } );

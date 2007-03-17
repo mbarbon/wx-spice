@@ -30,7 +30,7 @@ sub _call_on_idle($&) {
 }
 
 sub new {
-    my( $class, $parent, $wxebug ) = @_;
+    my( $class, $parent, $wxebug, $layout_state ) = @_;
     my $self = $class->SUPER::new( $parent, -1 );
 
     $self->wxebug( $wxebug );
@@ -54,6 +54,7 @@ sub new {
     $self->SetSizer( $sz );
 
     $self->subscribe_ebug( 'state_changed', sub { $self->_refresh( @_ ) } );
+    $self->set_layout_state( $layout_state ) if $layout_state;
     $self->register_view;
     $self->tree->AddRoot( '' );
 

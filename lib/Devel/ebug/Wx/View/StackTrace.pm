@@ -12,13 +12,14 @@ sub tag         { 'stack' }
 sub description { 'Stack' }
 
 sub new {
-    my( $class, $parent, $wxebug ) = @_;
+    my( $class, $parent, $wxebug, $layout_state ) = @_;
     my $self = $class->SUPER::new( $parent, -1 );
 
     $self->wxebug( $wxebug );
     $self->set_stacktrace if $self->ebug->line;
 
     $self->subscribe_ebug( 'state_changed', sub { $self->_read_stack( @_ ) } );
+    $self->set_layout_state( $layout_state ) if $layout_state;
     $self->register_view;
 
     EVT_LISTBOX( $self, $self, \&_lbox_click );

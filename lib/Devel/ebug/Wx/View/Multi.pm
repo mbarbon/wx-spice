@@ -33,11 +33,22 @@ sub tag {
     }
 }
 
-sub save_state { $_[0]->tag }
-sub load_state {
+sub set_layout_state {
     my( $self, $state ) = @_;
+    $self->SUPER::set_layout_state( $state );
+    $self->_tag( $state->{multi}{tag} );
+    $self->_index( $state->{multi}{index} );
+    # must do it _AFTER_ setting the tag
+    $self->register_view;
+}
 
-    $self->_tag( $state );
+sub get_layout_state {
+    my( $self ) = @_;
+    my $state = $self->SUPER::get_layout_state;
+    $state->{multi}{tag} = $self->tag;
+    $state->{multi}{index} = $self->_index;
+
+    return $state;
 }
 
 1;

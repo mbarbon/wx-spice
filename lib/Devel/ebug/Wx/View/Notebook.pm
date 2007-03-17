@@ -14,18 +14,19 @@ sub tag_base         { 'notebook' }
 sub description_base { 'Notebook' }
 
 sub new {
-    my( $class, $parent, $wxebug ) = @_;
+    my( $class, $parent, $wxebug, $layout_state ) = @_;
     my $self = $class->SUPER::new( $parent, -1, [-1, -1], [-1, -1],
                                    wxAUI_NB_TAB_MOVE|wxAUI_NB_CLOSE_BUTTON|
                                    wxAUI_NB_WINDOWLIST_BUTTON );
 
     $self->wxebug( $wxebug );
-    $self->register_view;
     $self->SetSize( $self->default_size );
 
     $self->AddPage( Wx::StaticText->new( $self, -1,
                                          "Use 'View -> Edit Notebooks'" ),
                     'Add pages' );
+    $self->set_layout_state( $layout_state ) if $layout_state;
+    $self->register_view;
 
     return $self;
 }
@@ -46,28 +47,29 @@ sub add_view {
     $self->has_views( 1 );
 }
 
-sub save_state {
+sub get_layout_state {
     my( $self ) = @_;
-    my $ps = $self->SUPER::save_state;
+    my $state = $self->SUPER::get_layout_state;
+    return $state unless $self->has_views;
 
-    return $ps unless $self->has_views;
-    return $ps . '|' . join ';', map $_->serialize,
-                                 map $self->GetPage( $_ ),
-                                     ( 0 .. $self->GetPageCount - 1 );
+    $state->{notebook} = [ map $_->get_layout_state,
+                           map $self->GetPage( $_ ),
+                               ( 0 .. $self->GetPageCount - 1 )
+                           ];
+
+    return $state;
 }
 
-sub load_state {
+sub set_layout_state {
     my( $self, $state ) = @_;
-    $state =~ /^(.*)\|(.*)$/ or die $state;
-    $self->SUPER::load_state( $1 );
+    $self->SUPER::set_layout_state( $state );
 
+    return unless $state->{notebook};
     $self->DeletePage( 0 ); # FIXME use non ad-hoc handling...
 
-    # FIXME duplicated vith viewmanager
-    foreach my $class ( split /;/, $2 ) {
-        $class =~ /^([\w:]+)\((.*)\)$/ or next;
-        my $instance = $1->new( $self, $self->wxebug );
-        $instance->load_state( $2 );
+    foreach my $subview ( @{$state->{notebook} || []} ) {
+        my $instance = $subview->{class}->new( $self, $self->wxebug,
+                                               $subview );
         $self->AddPage( $instance, $instance->description );
         $self->has_views( 1 );
     }
