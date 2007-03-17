@@ -66,6 +66,8 @@ sub new {
   my $value_or_default = $cfg->get_value( 'value_name', $value_default );
   $cfg->set_value( 'value_name', $value );
   $cfg->delete_value( 'value_name' );
+  $cfg->get_serialized_value( 'value_name', $default );
+  $cfg->set_serialized_value( 'value_name', $value );
 
 Returns an object that can be used to read/change/delete the value of
 the configuration keys for a given service.
@@ -85,14 +87,16 @@ sub finalize {
     $self->inifile->RewriteConfig if $self->inifile;
 }
 
+# FIXME document separately
 package Devel::ebug::Wx::Service::Configuration::My;
 
 use strict;
 use base qw(Class::Accessor::Fast);
+use YAML qw();
 
 __PACKAGE__->mk_ro_accessors( qw(inifile section) );
 
-sub abstract { 1 }
+sub abstract { 1 } # FIXME: use attributes
 
 sub new {
     my( $class, $inifile, $section ) = @_;
@@ -118,6 +122,24 @@ sub set_value {
     }
 
     return;
+}
+
+sub set_serialized_value {
+    my( $self, $name, $value ) = @_;
+
+    $self->set_value( $name, YAML::Dump( $value ) );
+}
+
+sub get_serialized_value {
+    my( $self, $name, $default ) = @_;
+
+    my @values = $self->get_value( $name, undef );
+    return $default unless @values;
+    my $undumped = eval {
+        YAML::Load( join "\n", @values, '' );
+    };
+
+    return $@ ? $default : $undumped;
 }
 
 sub delete_value {
