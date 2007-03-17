@@ -8,7 +8,7 @@ use base qw(Wx::Frame Class::Accessor::Fast);
 
 our $VERSION = '0.04';
 
-use Wx qw(:aui);
+use Wx qw(:aui wxOK);
 use Wx::Event qw(EVT_CLOSE);
 
 use Devel::ebug::Wx::Publisher;
@@ -26,6 +26,7 @@ sub new {
     $self->{service_manager} = Devel::ebug::Wx::ServiceManager->new;
 
     $self->ebug->add_subscriber( 'load_program', sub { $self->_pgm_load( @_ ) } );
+    $self->ebug->add_subscriber( 'finished', sub { $self->_pgm_stop( @_ ) } );
     $self->service_manager->initialize( $self );
     $self->service_manager->load_state;
 
@@ -49,6 +50,12 @@ sub _pgm_load {
     my( $self, $ebug, $event, %params ) = @_;
 
     $self->SetTitle( $params{filename} );
+}
+
+sub _pgm_stop {
+    my( $self, $ebug, $event, %params ) = @_;
+
+    Wx::MessageBox( "Program terminated", "wxebug", wxOK, $self );
 }
 
 # remap ->xxx_yy_service to ->get_service( 'xxx_yy' )
@@ -102,7 +109,7 @@ allow generic plugins to be views/commands/services at the same time?
 =item * define a service interface
 
 for example for code-viewing, configuration, gui management, view management
-allow enabling/dispabling services, commands, views
+allow enabling/disabling services, commands, views
 
 =item * add more views (package browser)
 
@@ -112,12 +119,16 @@ allow enabling/dispabling services, commands, views
 
 better editing interface
 better debugging, edge cases still present, esp. at load time
-views must be able to serialize themselves (needs a proper format)
 composite for notebooks (common base for notebook and viewmanager?)
 
 =item * allow saving debugger state between session
 
-=item * handle the cases when the debugged program is terminated
+=item * to restore breakpoints etc. at program restart
+
+=item * better handling for program termination
+
+visual feedback in the main window
+disable commands/etc when they do not make sense
 
 =item * break on subroutine, undo, watchpoints
 

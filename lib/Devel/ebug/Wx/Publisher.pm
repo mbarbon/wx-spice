@@ -35,10 +35,15 @@ my %no_notify =
           filenames break_points codelines pad finished
           is_running);
 
+my %must_be_running =
+   map { $_ => 1 }
+       qw(step next run return);
+
 our $AUTOLOAD;
 sub AUTOLOAD {
     my $self = shift;
     ( my $sub = $AUTOLOAD ) =~ s/.*:://;
+    return if $must_be_running{$sub} && !$self->is_running;
     if( wantarray ) {
         my @res = $self->ebug->$sub( @_ );
 
@@ -79,6 +84,7 @@ sub load_program {
 
 sub break_point {
     my( $self, $file, $line, $condition ) = @_;
+    return unless $self->is_running;
     my $res = $self->ebug->break_point( $file, $line, $condition );
 
     return unless $res->{line};
@@ -91,6 +97,7 @@ sub break_point {
 
 sub break_point_delete {
     my( $self, $file, $line ) = @_;
+    return unless $self->is_running;
     $self->ebug->break_point_delete( $file, $line );
 
     $self->_notify_breakpoint_changes( 'break_point_delete',

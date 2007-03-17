@@ -1,9 +1,11 @@
 Revision history for Perl extension Devel::ebug::Wx.
 
-0.04
+0.04  Sat Mar 17 21:05:06 CET 2007
 	- Always use Config::IniFiles for program configuration.
 	- Add serialization (via YAML) to the configuration manager.
 	- Make the view manager more resilient to inconsistent AUI state.
+	- More graceful handling for program termination (notify user
+	  and do not crash)
 
 0.03  Sun Mar 11 18:40:45 CET 2007
 	- Add expression display and console output views.
