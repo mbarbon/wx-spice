@@ -48,7 +48,7 @@ sub _lbox_click {
 # FIXME incremental read of stacktrace
 sub set_stacktrace {
     my( $self ) = @_;
-    my @frames = $self->ebug->stack_trace_folded;
+    my @frames = $self->ebug->folded_stack_trace;
     $self->Clear;
     foreach my $frame ( @frames ) {
         my $string = sprintf '%s: %d %s(%s)',

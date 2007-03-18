@@ -8,6 +8,7 @@ bin/ebug_wx
 lib/Devel/ebug/Backend/Plugin/EvalLevel.pm
 lib/Devel/ebug/Backend/Plugin/Wx.pm
 lib/Devel/ebug/Plugin/EvalLevel.pm
+lib/Devel/ebug/Plugin/FoldedStackTrace.pm
 lib/Devel/ebug/Plugin/Wx.pm
 lib/Devel/ebug/Wx.pm
 lib/Devel/ebug/Wx/Command/NotebookEdit.pm
