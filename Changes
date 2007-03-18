@@ -1,5 +1,7 @@
 Revision history for Perl extension Devel::ebug::Wx.
 
+0.05
+
 0.04  Sat Mar 17 21:05:06 CET 2007
 	- Always use Config::IniFiles for program configuration.
 	- Add serialization (via YAML) to the configuration manager.
