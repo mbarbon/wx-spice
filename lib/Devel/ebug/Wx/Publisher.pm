@@ -4,7 +4,7 @@ use strict;
 use base qw(Class::Accessor::Fast Class::Publisher);
 
 __PACKAGE__->mk_ro_accessors( qw(ebug argv) );
-__PACKAGE__->mk_accessors( qw(_line _sub _package _file) );
+__PACKAGE__->mk_accessors( qw(_line _sub _package _file _running) );
 
 use Devel::ebug;
 
@@ -16,6 +16,7 @@ sub new {
                                      _line    => -1,
                                      _sub     => '',
                                      _file    => '',
+                                     _running => 0,
                                      } );
 
     return $self;
@@ -74,11 +75,28 @@ sub load_program {
 
     $self->ebug->program( $filename );
     $self->ebug->load;
+    $self->_running( 1 );
 
-    $self->_notify_breakpoint_changes( 'load_program',
-                                       argv      => $self->argv,
-                                       filename  => $filename,
-                                       );
+    $self->notify_subscribers( 'load_program',
+                               argv      => $self->argv,
+                               filename  => $filename,
+                               );
+    $self->_notify_basic_changes;
+}
+
+sub reload_program {
+    my( $self ) = @_;
+
+    my $state = $self->ebug->get_state;
+    $self->ebug->load;
+    $self->_running( 1 );
+    $self->ebug->set_state( $state );
+
+    # FIXME notify all breakpoints
+    $self->notify_subscribers( 'load_program',
+                               argv      => $self->argv,
+                               filename  => $self->program,
+                               );
     $self->_notify_basic_changes;
 }
 
@@ -88,11 +106,11 @@ sub break_point {
     my $act_line = $self->ebug->break_point( $file, $line, $condition );
 
     return unless defined $act_line;
-    $self->_notify_breakpoint_changes( 'break_point',
-                                       file      => $file,
-                                       line      => $act_line,
-                                       condition => $condition,
-                                       );
+    $self->notify_subscribers( 'break_point',
+                               file      => $file,
+                               line      => $act_line,
+                               condition => $condition,
+                               );
 }
 
 sub break_point_delete {
@@ -100,23 +118,18 @@ sub break_point_delete {
     return unless $self->is_running;
     $self->ebug->break_point_delete( $file, $line );
 
-    $self->_notify_breakpoint_changes( 'break_point_delete',
-                                       file  => $file,
-                                       line  => $line,
-                                       );
-}
-
-sub _notify_breakpoint_changes {
-    my( $self, $event, %args ) = @_;
-
-    $self->notify_subscribers( $event, %args );
+    $self->notify_subscribers( 'break_point_delete',
+                               file  => $file,
+                               line  => $line,
+                               );
 }
 
 sub _notify_basic_changes {
     my( $self ) = @_;
     my $ebug = $self->ebug;
 
-    if( $ebug->finished ) {
+    if( $ebug->finished && $self->_running ) {
+        $self->_running( 0 );
         $self->notify_subscribers( 'finished' );
         return;
     }

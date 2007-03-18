@@ -43,8 +43,7 @@ sub register_commands {
 sub restart {
     my( $wx ) = @_;
 
-    # FIXME save and restore program state
-    $wx->ebug->load_program;
+    $wx->ebug->reload_program;
 }
 
 1;

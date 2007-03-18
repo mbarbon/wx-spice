@@ -118,12 +118,10 @@ allow enabling/disabling services, commands, views
 =item * notebooks
 
 better editing interface
-better debugging, edge cases still present, esp. at load time
+better debugging; edge cases still present, esp. at load time
 composite for notebooks (common base for notebook and viewmanager?)
 
-=item * allow saving debugger state between session
-
-=item * to restore breakpoints etc. at program restart
+=item * allow saving debugger state between sessions
 
 =item * better handling for program termination
 
