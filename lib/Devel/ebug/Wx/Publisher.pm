@@ -85,12 +85,12 @@ sub load_program {
 sub break_point {
     my( $self, $file, $line, $condition ) = @_;
     return unless $self->is_running;
-    my $res = $self->ebug->break_point( $file, $line, $condition );
+    my $act_line = $self->ebug->break_point( $file, $line, $condition );
 
-    return unless $res->{line};
+    return unless defined $act_line;
     $self->_notify_breakpoint_changes( 'break_point',
                                        file      => $file,
-                                       line      => $res->{line},
+                                       line      => $act_line,
                                        condition => $condition,
                                        );
 }

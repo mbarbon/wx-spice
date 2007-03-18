@@ -11,19 +11,14 @@ package DB;
 
 *_project = \&Devel::ebug::Backend::Plugin::EvalLevel::project;
 
-# FIXME use Devel::ebug's eval
-# FIXME distinguish success and exception thrown
 sub eval_level {
     my( $req, $context ) = @_;
-    my $eval = $req->{eval};
-    local $SIG{__WARN__} = sub {};
+    my $res = DB::eval( $req, $context ); # FIXME breaks encapsulation
 
-    my $v = eval "package $context->{package}; $eval";
-    if( $@ ) {
-        return { eval => $@, exception => 1 };
-    } else {
-        return { eval => _project( $v, $req->{level} ) };
+    unless( $res->{exception} ) {
+        $res->{eval} = _project( $res->{eval}, $req->{level} )
     }
+    return $res;
 }
 
 package Devel::ebug::Backend::Plugin::EvalLevel;

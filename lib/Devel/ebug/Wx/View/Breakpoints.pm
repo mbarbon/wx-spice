@@ -29,10 +29,10 @@ sub new {
 
     if( $wxebug->ebug->is_running ) {
         $self->_add_bp( $wxebug->ebug, undef,
-                        file      => $_->[0],
-                        line      => $_->[1],
-                        condition => $_->[2],
-                      ) foreach $wxebug->ebug->all_break_points;
+                        file      => $_->{filename},
+                        line      => $_->{line},
+                        condition => $_->{condition},
+                      ) foreach $wxebug->ebug->all_break_points_with_condition;
     }
 
     $self->SetSize( $self->default_size );

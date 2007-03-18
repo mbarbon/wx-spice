@@ -74,8 +74,8 @@ sub show_code_for_file {
     $self->SetText( join "\n", $self->ebug->codelines( $filename ) );
     $self->SetReadOnly( 1 );
     $self->filename( $filename );
-    $self->show_break_point( $_->[0] )
-        foreach $self->ebug->break_points_file( $filename );
+    $self->show_break_point( $_ )
+        foreach $self->ebug->break_points( $filename );
     $self->highlighted_line( 0 );
 }
 
