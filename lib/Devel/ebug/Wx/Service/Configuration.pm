@@ -87,7 +87,6 @@ sub finalize {
     $self->inifile->RewriteConfig if $self->inifile;
 }
 
-# FIXME document separately
 package Devel::ebug::Wx::Service::Configuration::My;
 
 use strict;

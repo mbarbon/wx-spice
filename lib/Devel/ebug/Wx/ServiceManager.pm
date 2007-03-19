@@ -133,11 +133,10 @@ sub get_service {
     my( $service, @rest ) = grep $_->service_name eq $name,
                                  $self->active_services;
 
-    # FIXME what if more than one?
+    # @rest can be nonempty only if two clashing services exist
     unless( $service->initialized ) {
         $service->initialize( $wxebug );
         $service->initialized( 1 );
-        # FIXME should call load_state, too?
     }
     return $service;
 }

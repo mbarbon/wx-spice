@@ -64,9 +64,9 @@ sub _setup_commands {
     my @commands = $self->commands;
     my( %key_map, %menu_tree, %cmds );
 
+    # passing $wxebug here is correct because a command might
+    # want to act on a single instance
     # FIXME: duplicates?
-    # FIXME: passing $self is hack
-    # FIXME allow plugins that are service, command and view
     %cmds = map  $_->register_commands( $self->wxebug ),
             grep $_->can( 'register_commands' ),
                  @commands;
