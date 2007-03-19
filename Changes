@@ -1,5 +1,10 @@
 Revision history for Perl extension Devel::ebug::Wx.
 
+branch:
+	- Base class for all plugins, allows declaring
+	  commands/views/services/configuration views using
+	  attributes.
+
 0.05
 	- Keep breakpoints when program is restarted.
 	- Depend on Devel::ebug 0.47.

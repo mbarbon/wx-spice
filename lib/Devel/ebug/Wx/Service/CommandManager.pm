@@ -66,10 +66,11 @@ sub _setup_commands {
 
     # FIXME: duplicates?
     # FIXME: passing $self is hack
-    # FIXME allow plugins that are service, command and view
-    %cmds = map  $_->register_commands( $self->wxebug ),
-            grep $_->can( 'register_commands' ),
-                 @commands;
+    %cmds = ( ( map  $_->register_commands( $self->wxebug ),
+                grep $_->can( 'register_commands' ),
+                     @commands ),
+              ( map  $_->( $self->wxebug ),
+                     Devel::ebug::Wx::Plugin::Base->commands ) );
     foreach my $id ( grep $cmds{$_}{key}, keys %cmds ) {
         $key_map{$cmds{$id}{key}} = $cmds{$id};
     }

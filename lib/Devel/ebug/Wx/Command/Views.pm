@@ -1,8 +1,9 @@
 package Devel::ebug::Wx::Command::Views;
 
 use strict;
+use Devel::ebug::Wx::Plugin::Base;
 
-sub register_commands {
+sub commands : Command {
     my( $class, $wxebug ) = @_;
     my @commands;
 

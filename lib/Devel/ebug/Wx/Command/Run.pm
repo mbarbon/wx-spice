@@ -1,8 +1,9 @@
 package Devel::ebug::Wx::Command::Run;
 
 use strict;
+use Devel::ebug::Wx::Plugin::Base;
 
-sub register_commands {
+sub commands : Command {
     return
       ( run_menu => { tag      => 'run',
                       label    => 'Run',

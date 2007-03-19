@@ -1,10 +1,11 @@
 package Devel::ebug::Wx::Command::ShowFile;
 
 use strict;
+use Devel::ebug::Wx::Plugin::Base;
 
 use Wx qw(:id);
 
-sub register_commands {
+sub commands : Command {
     return
       ( view_menu => { tag      => 'view',
                        label    => 'View',

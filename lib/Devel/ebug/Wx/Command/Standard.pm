@@ -1,10 +1,11 @@
 package Devel::ebug::Wx::Command::Standard;
 
 use strict;
+use Devel::ebug::Wx::Plugin::Base;
 
 use Wx qw(wxOK wxVERSION_STRING);
 
-sub register_commands {
+sub commands : Command {
     return
       ( file_menu => { tag      => 'file',
                        label    => 'File',
