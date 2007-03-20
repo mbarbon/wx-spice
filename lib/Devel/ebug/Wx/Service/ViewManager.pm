@@ -66,7 +66,7 @@ sub initialize {
         ->CloseButton->DestroyOnClose( 0 );
 }
 
-sub save_state {
+sub save_configuration {
     my( $self ) = @_;
 
     my $cfg = $self->wxebug->configuration_service->get_config( 'view_manager' );
@@ -78,7 +78,7 @@ sub save_state {
     $cfg->set_value( 'frame_geometry', sprintf '%d,%d,%d,%d', @xywh );
 }
 
-sub load_state {
+sub load_configuration {
     my( $self ) = @_;
 
     # FIXME alignment between the AUI config and views, grep out views
