@@ -101,7 +101,8 @@ to dock/undock and arrange views.
 
 =item * make a saner interface for plugins
 
-what do commands do; better registration interface
+command is just an action (coderef) with a string id
+command description ties commands to the CommandManager to create menus
 allow generic plugins to offer views/commands/services at the same time
 
 =item * define a service interface
@@ -126,15 +127,6 @@ allow a configuration view to configure multiple
 better editing interface
 better debugging; edge cases still present, esp. at load time
 rethink container view interface and the whole concept of multiviews
-
-=item * allow saving debugger state between sessions
-
-views have gui state that needs saving,
-global state of the debugger gui
-gui state might be in a different place from configuration state
-separate "debugged program" state (bp, expressions, view state) from
-  ebug_wx state (configuration and view layout); push temporary overlay on
-  configuration manager
 
 =item * better handling for program termination
 
