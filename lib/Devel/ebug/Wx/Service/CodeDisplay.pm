@@ -10,7 +10,8 @@ __PACKAGE__->mk_accessors( qw(code_display) );
 sub service_name { 'code_display' }
 
 sub initialize {
-    my( $self, $wxebug ) = @_;
+    my( $self, $manager ) = @_;
+    my $wxebug = $manager->get_service( 'ebug_wx' );
 
     # FIXME: event related to stepping/breakpointing should be
     #        handled here, to allow the view to be used in the eval window

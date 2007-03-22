@@ -50,14 +50,14 @@ sub views { grep !$_->abstract, $_[0]->_views }
 sub service_name { 'view_manager' }
 
 sub initialize {
-    my( $self, $wxebug ) = @_;
+    my( $self, $manager ) = @_;
 
-    $self->wxebug( $wxebug );
+    $self->wxebug( $manager->get_service( 'ebug_wx' ) );
     $self->manager( Wx::AuiManager->new );
     $self->active_views( {} );
     $self->views; # force loading of views
 
-    $self->manager->SetManagedWindow( $wxebug );
+    $self->manager->SetManagedWindow( $self->wxebug );
 
     # default Pane Info
     $self->{pane_info} = Wx::AuiPaneInfo->new

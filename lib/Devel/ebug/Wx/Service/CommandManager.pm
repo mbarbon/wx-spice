@@ -16,9 +16,9 @@ use Wx::Event qw(EVT_MENU EVT_UPDATE_UI);
 sub service_name { 'command_manager' }
 
 sub initialize {
-    my( $self, $wxebug ) = @_;
+    my( $self, $manager ) = @_;
 
-    $self->{wxebug} = $wxebug;
+    $self->{wxebug} = $manager->get_service( 'ebug_wx' );
     ( $self->{key_map}, $self->{_menu_tree} ) = $self->_setup_commands;
 }
 

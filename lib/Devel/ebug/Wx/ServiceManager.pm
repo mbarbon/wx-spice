@@ -74,12 +74,11 @@ C<initialized> property to true.
 sub initialize {
     my( $self ) = @_;
 
-    my $wxebug = $self->get_service( 'ebug_wx' );
     foreach my $service ( $self->active_services ) {
         next if $service->initialized;
         $service->service_manager( $self )
           if $service->can( 'service_manager' );
-        $service->initialize( $wxebug );
+        $service->initialize( $self );
         $service->initialized( 1 );
     }
 }
@@ -155,7 +154,7 @@ sub get_service {
     unless( $service->initialized ) {
         $service->service_manager( $self )
           if $service->can( 'service_manager' );
-        $service->initialize( $self->get_service( 'ebug_wx' ) );
+        $service->initialize( $self );
         $service->initialized( 1 );
     }
     return $service;

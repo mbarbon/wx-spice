@@ -15,7 +15,7 @@ Devel::ebug::Wx::Service::Base - base class for services
   __PACKAGE__->mk_accessors( qw(foo moo) );
 
   # override one or more of the stub methods
-  sub initialize         { my( $self, $wxebug ) = @_; # ... }
+  sub initialize         { my( $self, $manager ) = @_; # ... }
   sub load_configuration { my( $self ) = @_; # ... }
   sub save_configuration { my( $self ) = @_; # ... }
   sub finalize           { my( $self ) = @_; # ... }
@@ -31,7 +31,7 @@ __PACKAGE__->mk_accessors( qw(initialized finalized) );
 sub abstract { __PACKAGE__ eq $_[0] }
 
 # empty base implementations
-sub initialize         { my( $self, $wxebug ) = @_; }
+sub initialize         { my( $self, $manager ) = @_; }
 sub load_configuration { my( $self ) = @_; }
 sub save_configuration { my( $self ) = @_; }
 sub finalize           { my( $self ) = @_; }
