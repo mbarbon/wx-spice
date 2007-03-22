@@ -28,7 +28,7 @@ sub new {
     $self->ebug->add_subscriber( 'load_program', sub { $self->_pgm_load( @_ ) } );
     $self->ebug->add_subscriber( 'finished', sub { $self->_pgm_stop( @_ ) } );
     $self->service_manager->initialize( $self );
-    $self->service_manager->load_state;
+    $self->service_manager->load_configuration;
 
     $self->SetMenuBar( $self->command_manager_service->get_menu_bar );
 

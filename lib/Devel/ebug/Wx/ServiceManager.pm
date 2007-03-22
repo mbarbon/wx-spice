@@ -80,25 +80,25 @@ sub initialize {
     }
 }
 
-=head2 load_state
+=head2 load_configuration
 
-  $sm->load_state;
+  $sm->load_configuration;
 
-Calls C<load_state> on all service instances.
+Calls C<load_configuration> on all service instances.
 
 =cut
 
-sub load_state {
+sub load_configuration {
     my( $self ) = @_;
 
-    $_->load_state foreach $self->active_services;
+    $_->load_configuration foreach $self->active_services;
 }
 
 =head2 finalize
 
   $sm->finalize( $wxebug );
 
-Calls C<save_state> on all service instances, then calls C<finalize>
+Calls C<save_configuration> on all service instances, then calls C<finalize>
 on them and sets their C<finalized> property to true.
 
 Important: the C<initialized> property is still true even after
@@ -110,7 +110,7 @@ sub finalize {
     my( $self, $wxebug ) = @_;
 
     # distinguish between explicit and implicit state saving?
-    $_->save_state foreach $self->active_services;
+    $_->save_configuration foreach $self->active_services;
     foreach my $service ( $self->active_services ) {
         next if $service->finalized;
         $service->finalize;
@@ -124,7 +124,7 @@ sub finalize {
 
 Returns an active service with the given name, or C<undef> if none is
 found.  If the service has not been initialized, calls C<inititialize>
-as well, but not C<load_state>.
+as well, but not C<load_configuration>.
 
 =cut
 
