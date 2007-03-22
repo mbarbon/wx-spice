@@ -45,7 +45,7 @@ sub file_name {
 }
 
 sub new {
-    my( $class, $wxebug ) = @_;
+    my( $class ) = @_;
     my $self = $class->SUPER::new( { inifiles => {} } );
 
     $self->{default_file} = $class->file_name;
