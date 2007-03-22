@@ -3,6 +3,7 @@ package Devel::ebug::Wx::Service::CodeDisplay;
 use strict;
 use base qw(Devel::ebug::Wx::Service::Base);
 
+use Devel::ebug::Wx::ServiceManager::Holder;
 use Devel::ebug::Wx::View::Code::STC;
 
 __PACKAGE__->mk_accessors( qw(code_display) );
@@ -17,7 +18,7 @@ sub initialize {
     #        handled here, to allow the view to be used in the eval window
     $self->{code_display} = Devel::ebug::Wx::View::Code::STC->new
                                 ( $wxebug, $wxebug );
-    $wxebug->view_manager_service->create_pane
+    $self->view_manager_service->create_pane
       ( $self->code_display, { name    => 'source_code',
                                caption => 'Code',
                                } );

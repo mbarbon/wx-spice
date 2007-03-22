@@ -3,8 +3,6 @@ package Devel::ebug::Wx::Service::ViewManager;
 use strict;
 use base qw(Devel::ebug::Wx::Service::Base);
 
-use Wx::AUI;
-
 =head1 NAME
 
 Devel::ebug::Wx::Service::ViewManager - manage view docking/undocking
@@ -36,6 +34,9 @@ between sessions.
 =head1 METHODS
 
 =cut
+
+use Wx::AUI;
+use Devel::ebug::Wx::ServiceManager::Holder;
 
 use Module::Pluggable
       sub_name    => '_views',
@@ -69,7 +70,7 @@ sub initialize {
 sub save_configuration {
     my( $self ) = @_;
 
-    my $cfg = $self->wxebug->configuration_service->get_config( 'view_manager' );
+    my $cfg = $self->configuration_service->get_config( 'view_manager' );
     my( @xywh ) = ( $self->wxebug->GetPositionXY, $self->wxebug->GetSizeWH );
     $cfg->set_value( 'aui_perspective', $self->manager->SavePerspective );
     $cfg->set_serialized_value( 'views', [ map  $_->get_layout_state,
@@ -83,7 +84,7 @@ sub load_configuration {
 
     # FIXME alignment between the AUI config and views, grep out views
     #       without perspective
-    my $cfg = $self->wxebug->configuration_service->get_config( 'view_manager' );
+    my $cfg = $self->configuration_service->get_config( 'view_manager' );
     my $profile = $cfg->get_value( 'aui_perspective', '' );
     my $views = $cfg->get_serialized_value( 'views', [] );
     foreach my $view ( @$views ) {
