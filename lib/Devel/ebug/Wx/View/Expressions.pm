@@ -74,6 +74,19 @@ sub new {
     return $self;
 }
 
+sub get_state {
+    my( $self ) = @_;
+
+    return $self->_expressions;
+}
+
+sub set_state {
+    my( $self, $state ) = @_;
+
+    $self->{_expressions} = $state; # FIXME check
+    $self->refresh;
+}
+
 sub add_expression {
     my( $self, $expression ) = @_;
 

@@ -113,6 +113,32 @@ sub load_configuration {
     $self->manager->Update;
 }
 
+# FIXME document get_state/set_state as part of view interface
+sub save_program_state {
+    my( $self, $file ) = @_;
+    my $cfg = $self->get_service( 'configuration' )
+                   ->get_config( 'view_manager', $file );
+
+    foreach my $view ( $self->active_views_list ) {
+        next unless $view->can( 'get_state' );
+        $cfg->set_serialized_value( $view->tag, $view->get_state );
+    }
+}
+
+sub load_program_state {
+    my( $self, $file ) = @_;
+    my $cfg = $self->get_service( 'configuration' )
+                   ->get_config( 'view_manager', $file );
+
+    # FIXME what about the state of an inactive view?
+    foreach my $view ( $self->active_views_list ) {
+        next unless $view->can( 'set_state' );
+        my $state = $cfg->get_serialized_value( $view->tag );
+        next unless $state;
+        $view->set_state( $state );
+    }
+}
+
 =head2 active_views_list
 
   my @views = $vm->active_views_list;

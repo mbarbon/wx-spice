@@ -1,7 +1,7 @@
 Revision history for Perl extension Devel::ebug::Wx.
 
 branch:
-	- Allow saving/restoring program state.
+	- Allow saving/restoring program/view state.
 
 0.05  Mon Mar 19 22:05:24 CET 2007
 	- Keep breakpoints when program is restarted.
