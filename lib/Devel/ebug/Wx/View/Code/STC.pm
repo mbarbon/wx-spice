@@ -34,8 +34,16 @@ sub new {
     $self->subscribe_ebug( 'line_changed', sub { $self->_show_line( @_ ) } );
     $self->subscribe_ebug( 'break_point', sub { $self->_break_point( @_ ) } );
     $self->subscribe_ebug( 'break_point_delete', sub { $self->_break_point( @_ ) } );
+    $self->subscribe_ebug( 'load_program_state', sub { $self->_change_state( @_ ) } );
 
     return $self;
+}
+
+sub _change_state {
+    my( $self ) = @_;
+
+    $self->show_break_point( $_ )
+        foreach $self->ebug->break_points( $self->filename );
 }
 
 sub _break_point {
