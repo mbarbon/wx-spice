@@ -3,8 +3,6 @@ package Devel::ebug::Wx::Service::ViewManager;
 use strict;
 use base qw(Devel::ebug::Wx::Service::Base);
 
-use Wx::AUI;
-
 =head1 NAME
 
 Devel::ebug::Wx::Service::ViewManager - manage view docking/undocking
@@ -37,6 +35,9 @@ between sessions.
 
 =cut
 
+use Wx::AUI;
+use Devel::ebug::Wx::ServiceManager::Holder;
+
 use Module::Pluggable
       sub_name    => '_views',
       search_path => 'Devel::ebug::Wx::View',
@@ -50,14 +51,14 @@ sub views { grep !$_->abstract, $_[0]->_views }
 sub service_name { 'view_manager' }
 
 sub initialize {
-    my( $self, $wxebug ) = @_;
+    my( $self, $manager ) = @_;
 
-    $self->wxebug( $wxebug );
+    $self->wxebug( $manager->get_service( 'ebug_wx' ) );
     $self->manager( Wx::AuiManager->new );
     $self->active_views( {} );
     $self->views; # force loading of views
 
-    $self->manager->SetManagedWindow( $wxebug );
+    $self->manager->SetManagedWindow( $self->wxebug );
 
     # default Pane Info
     $self->{pane_info} = Wx::AuiPaneInfo->new
@@ -69,7 +70,7 @@ sub initialize {
 sub save_configuration {
     my( $self ) = @_;
 
-    my $cfg = $self->wxebug->configuration_service->get_config( 'view_manager' );
+    my $cfg = $self->configuration_service->get_config( 'view_manager' );
     my( @xywh ) = ( $self->wxebug->GetPositionXY, $self->wxebug->GetSizeWH );
     $cfg->set_value( 'aui_perspective', $self->manager->SavePerspective );
     $cfg->set_serialized_value( 'views', [ map  $_->get_layout_state,
@@ -83,7 +84,7 @@ sub load_configuration {
 
     # FIXME alignment between the AUI config and views, grep out views
     #       without perspective
-    my $cfg = $self->wxebug->configuration_service->get_config( 'view_manager' );
+    my $cfg = $self->configuration_service->get_config( 'view_manager' );
     my $profile = $cfg->get_value( 'aui_perspective', '' );
     my $views = $cfg->get_serialized_value( 'views', [] );
     foreach my $view ( @$views ) {
@@ -110,6 +111,32 @@ sub load_configuration {
     }
 
     $self->manager->Update;
+}
+
+# FIXME document get_state/set_state as part of view interface
+sub save_program_state {
+    my( $self, $file ) = @_;
+    my $cfg = $self->get_service( 'configuration' )
+                   ->get_config( 'view_manager', $file );
+
+    foreach my $view ( $self->active_views_list ) {
+        next unless $view->can( 'get_state' );
+        $cfg->set_serialized_value( $view->tag, $view->get_state );
+    }
+}
+
+sub load_program_state {
+    my( $self, $file ) = @_;
+    my $cfg = $self->get_service( 'configuration' )
+                   ->get_config( 'view_manager', $file );
+
+    # FIXME what about the state of an inactive view?
+    foreach my $view ( $self->active_views_list ) {
+        next unless $view->can( 'set_state' );
+        my $state = $cfg->get_serialized_value( $view->tag );
+        next unless $state;
+        $view->set_state( $state );
+    }
 }
 
 =head2 active_views_list

@@ -1,7 +1,10 @@
 package Devel::ebug::Wx::Publisher;
 
 use strict;
-use base qw(Class::Accessor::Fast Class::Publisher);
+use base qw(Class::Accessor::Fast Class::Publisher
+            Devel::ebug::Wx::Service::Base);
+
+use Devel::ebug::Wx::ServiceManager::Holder;
 
 __PACKAGE__->mk_ro_accessors( qw(ebug argv) );
 __PACKAGE__->mk_accessors( qw(_line _sub _package _file _running) );
@@ -21,6 +24,8 @@ sub new {
 
     return $self;
 }
+
+sub service_name { 'ebug_publisher' }
 
 sub DESTROY {
     my ( $self ) = @_;
@@ -84,6 +89,25 @@ sub load_program {
     $self->_notify_basic_changes;
 }
 
+sub save_program_state {
+    my( $self, $file ) = @_;
+    my $state = $self->ebug->get_state;
+    my $cfg = $self->get_service( 'configuration' )
+                   ->get_config( 'ebug_publisher', $file );
+
+    $cfg->set_serialized_value( 'state', $state );
+}
+
+sub load_program_state {
+    my( $self, $file ) = @_;
+    my $cfg = $self->get_service( 'configuration' )
+                   ->get_config( 'ebug_publisher', $file );
+    my $state = $cfg->get_serialized_value( 'state' );
+
+    $self->set_state( $state ) if $state;
+    $self->notify_subscribers( 'load_program_state' ); # FIXME bad name
+}
+
 sub reload_program {
     my( $self ) = @_;
 
@@ -92,11 +116,11 @@ sub reload_program {
     $self->_running( 1 );
     $self->ebug->set_state( $state );
 
-    # FIXME notify all breakpoints
     $self->notify_subscribers( 'load_program',
                                argv      => $self->argv,
                                filename  => $self->program,
                                );
+    $self->notify_subscribers( 'load_program_state' );
     $self->_notify_basic_changes;
 }
 

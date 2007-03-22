@@ -25,7 +25,7 @@ services.
 
 =cut
 
-__PACKAGE__->mk_ro_accessors( qw(inifile) );
+__PACKAGE__->mk_ro_accessors( qw(inifiles default_file) );
 
 use File::UserConfig;
 use Config::IniFiles;
@@ -45,23 +45,38 @@ sub file_name {
 }
 
 sub new {
-    my( $class, $wxebug ) = @_;
-    my $self = $class->SUPER::new;
-    my $file = $class->file_name;
+    my( $class ) = @_;
+    my $self = $class->SUPER::new( { inifiles => {} } );
 
-    if( -f $file ) {
-        $self->{inifile} = Config::IniFiles->new( -file => $file );
-    } else {
-        $self->{inifile} = Config::IniFiles->new;
-        $self->inifile->SetFileName( $file );
-    }
+    $self->{default_file} = $class->file_name;
+    _load_inifile( $self, $self->default_file );
 
     return $self;
+}
+
+sub _read_or_create {
+    my( $file ) = @_;
+
+    if( -f $file ) {
+        return Config::IniFiles->new( -file => $file );
+    } else {
+        my $inifile = Config::IniFiles->new;
+        $inifile->SetFileName( $file );
+
+        return $inifile;
+    }
+}
+
+sub _load_inifile {
+    my( $self, $file_name ) = @_;
+
+    $self->inifiles->{$file_name} ||= _read_or_create( $file_name );
 }
 
 =head2 get_config
 
   my $cfg = $cm->get_config( 'service_name' );
+  my $cfg2 = $cm->get_config( 'service_name', 'myfile.ini' );
 
   my $value_or_default = $cfg->get_value( 'value_name', $value_default );
   $cfg->set_value( 'value_name', $value );
@@ -69,22 +84,31 @@ sub new {
   $cfg->get_serialized_value( 'value_name', $default );
   $cfg->set_serialized_value( 'value_name', $value );
 
+  # force file rewrite
+  $cm->flush( 'myfile.ini' );
+
 Returns an object that can be used to read/change/delete the value of
 the configuration keys for a given service.
 
 =cut
 
 sub get_config {
-    my( $self, $section ) = @_;
+    my( $self, $section, $filename ) = @_;
 
-    return Devel::ebug::Wx::Service::Configuration::My->new( $self->inifile,
-                                                             $section );
+    return Devel::ebug::Wx::Service::Configuration::My->new
+      ( _load_inifile( $self, $filename || $self->default_file ), $section );
 }
 
 sub finalize {
     my( $self ) = @_;
 
-    $self->inifile->RewriteConfig if $self->inifile;
+    $_->RewriteConfig foreach values %{$self->inifiles};
+}
+
+sub flush {
+    my( $self, $file ) = @_;
+
+    $self->inifiles->{$file}->RewriteConfig if $self->inifiles->{$file};
 }
 
 package Devel::ebug::Wx::Service::Configuration::My;

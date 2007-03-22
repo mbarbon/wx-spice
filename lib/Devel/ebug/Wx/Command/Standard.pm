@@ -22,7 +22,7 @@ sub register_commands {
         quit      => { sub      => \&quit,
                        menu     => 'file',
                        label    => 'Exit',
-                       priority => 100,
+                       priority => 1000,
                        },
         about     => { sub   => \&about,
                        menu  => 'help',

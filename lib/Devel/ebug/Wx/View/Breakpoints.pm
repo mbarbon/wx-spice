@@ -19,6 +19,7 @@ sub new {
 
     $self->subscribe_ebug( 'break_point', sub { $self->_add_bp( @_ ) } );
     $self->subscribe_ebug( 'break_point_delete', sub { $self->_del_bp( @_ ) } );
+    $self->subscribe_ebug( 'load_program_state', sub { $self->load_all_breakpoints } );
     $self->set_layout_state( $layout_state ) if $layout_state;
     $self->register_view;
 
@@ -27,17 +28,28 @@ sub new {
 
     $self->sizer( $sizer );
 
-    if( $wxebug->ebug->is_running ) {
-        $self->_add_bp( $wxebug->ebug, undef,
-                        file      => $_->{filename},
-                        line      => $_->{line},
-                        condition => $_->{condition},
-                      ) foreach $wxebug->ebug->all_break_points_with_condition;
-    }
+    $self->load_all_breakpoints if $wxebug->ebug->is_running;
 
     $self->SetSize( $self->default_size );
 
     return $self;
+}
+
+sub load_all_breakpoints {
+    my( $self ) = @_;
+    my $wxebug = $self->wxebug;
+
+    foreach my $pane ( @{$self->panes} ) {
+        $self->sizer->Detach( $pane );
+        $pane->Destroy;
+    }
+    $self->{panes} = [];
+
+    $self->_add_bp( $wxebug->ebug, undef,
+                    file      => $_->{filename},
+                    line      => $_->{line},
+                    condition => $_->{condition},
+                    ) foreach $wxebug->ebug->all_break_points_with_condition;
 }
 
 sub _compare {
