@@ -4,17 +4,21 @@ use Wx;
 
 use strict;
 use warnings;
-use base qw(Wx::Frame Class::Accessor::Fast);
+use base qw(Wx::Frame Devel::ebug::Wx::Service::Base Class::Accessor::Fast);
 
 our $VERSION = '0.05';
 
 use Wx qw(:aui wxOK);
 use Wx::Event qw(EVT_CLOSE);
 
-use Devel::ebug::Wx::Publisher;
 use Devel::ebug::Wx::ServiceManager;
+use Devel::ebug::Wx::ServiceManager::Holder;
+use Devel::ebug::Wx::Publisher;
 
-__PACKAGE__->mk_ro_accessors( qw(ebug service_manager) );
+__PACKAGE__->mk_ro_accessors( qw(ebug) );
+
+sub service_name { 'ebug_wx' }
+sub initialized  { 1 }
 
 sub new {
     my( $class, $args ) = @_;
@@ -22,13 +26,16 @@ sub new {
 
     EVT_CLOSE( $self, \&_on_close );
 
-    $self->{ebug} = Devel::ebug::Wx::Publisher->new;
-    $self->{service_manager} = Devel::ebug::Wx::ServiceManager->new;
+    $self->service_manager( Devel::ebug::Wx::ServiceManager->new );
+    $self->service_manager->add_service( Devel::ebug::Wx::Publisher->new ); # FIXME
+    $self->service_manager->add_service( $self );
+    $self->{ebug} = $self->ebug_publisher_service;
+
+    $self->service_manager->initialize;
+    $self->service_manager->load_configuration;
 
     $self->ebug->add_subscriber( 'load_program', sub { $self->_pgm_load( @_ ) } );
     $self->ebug->add_subscriber( 'finished', sub { $self->_pgm_stop( @_ ) } );
-    $self->service_manager->initialize( $self );
-    $self->service_manager->load_configuration;
 
     $self->SetMenuBar( $self->command_manager_service->get_menu_bar );
 
@@ -36,8 +43,6 @@ sub new {
 
     return $self;
 }
-
-sub get_service { $_[0]->service_manager->get_service( $_[0], $_[1] ) }
 
 sub _on_close {
     my( $self ) = @_;
@@ -56,15 +61,6 @@ sub _pgm_stop {
     my( $self, $ebug, $event, %params ) = @_;
 
     Wx::MessageBox( "Program terminated", "wxebug", wxOK, $self );
-}
-
-# remap ->xxx_yy_service to ->get_service( 'xxx_yy' )
-our $AUTOLOAD;
-sub AUTOLOAD {
-    my $self = shift;
-    return if $AUTOLOAD =~ /::DESTROY$/;
-    ( my $sub = $AUTOLOAD ) =~ s/.*::(\w+)_service$/$1/;
-    return $self->get_service( $1 );
 }
 
 1;
