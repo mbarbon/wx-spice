@@ -123,15 +123,6 @@ better editing interface
 better debugging; edge cases still present, esp. at load time
 rethink container view interface and the whole concept of multiviews
 
-=item * allow saving debugger state between sessions
-
-views have gui state that needs saving,
-global state of the debugger gui
-gui state might be in a different place from configuration state
-separate "debugged program" state (bp, expressions, view state) from
-  ebug_wx state (configuration and view layout); push temporary overlay on
-  configuration manager
-
 =item * better handling for program termination
 
 visual feedback in the main window
