@@ -17,6 +17,7 @@ lib/Devel/ebug/Wx/Command/NotebookEdit.pm
 lib/Devel/ebug/Wx/Command/Run.pm
 lib/Devel/ebug/Wx/Command/ShowFile.pm
 lib/Devel/ebug/Wx/Command/Standard.pm
+lib/Devel/ebug/Wx/Command/State.pm
 lib/Devel/ebug/Wx/Command/Views.pm
 lib/Devel/ebug/Wx/Publisher.pm
 lib/Devel/ebug/Wx/Service/Base.pm
