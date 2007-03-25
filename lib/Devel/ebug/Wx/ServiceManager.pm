@@ -174,6 +174,7 @@ use base qw(Exporter);
 
 $INC{'Devel/ebug/Wx/ServiceManager/Holder.pm'} = __FILE__;
 our @EXPORT = qw(AUTOLOAD service_manager get_service);
+our %EXPORT_TAGS = ( 'noautoload' => [ qw(service_manager get_service) ] );
 
 sub service_manager { # the usual getter/setter
     return $_[0]->{service_manager} = $_[1] if @_ > 1;
