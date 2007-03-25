@@ -6,7 +6,7 @@ use base qw(Class::Accessor::Fast Class::Publisher
 
 use Devel::ebug::Wx::ServiceManager::Holder;
 
-__PACKAGE__->mk_ro_accessors( qw(ebug argv) );
+__PACKAGE__->mk_ro_accessors( qw(ebug argv script) );
 __PACKAGE__->mk_accessors( qw(_line _sub _package _file _running) );
 
 use Devel::ebug;
@@ -72,6 +72,7 @@ sub is_running {
 sub load_program {
     my( $self, $argv ) = @_;
     $self->{argv} = $argv || $self->{argv} || [];
+    $self->{script} = $self->argv->[0];
     my $filename = join ' ', @{$self->argv};
 
     unless ($filename) {
