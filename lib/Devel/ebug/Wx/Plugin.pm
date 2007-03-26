@@ -1,4 +1,4 @@
-package Devel::ebug::Wx::Plugin::Base;
+package Devel::ebug::Wx::Plugin;
 
 use strict;
 use base qw(Exporter);

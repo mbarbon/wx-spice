@@ -1,7 +1,7 @@
 package Devel::ebug::Wx::Command::Standard;
 
 use strict;
-use Devel::ebug::Wx::Plugin::Base qw(:plugin);
+use Devel::ebug::Wx::Plugin qw(:plugin);
 
 use Wx qw(wxOK wxVERSION_STRING);
 
