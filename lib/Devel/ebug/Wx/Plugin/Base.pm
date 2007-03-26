@@ -3,9 +3,10 @@ package Devel::ebug::Wx::Plugin::Base;
 use strict;
 use base qw(Exporter);
 
-our @EXPORT = qw(MODIFY_CODE_ATTRIBUTES);
-our @EXPORT_OK = qw(load_plugins);
-our %EXPORT_TAGS = ( 'manager' => [ qw(load_plugins) ], );
+our @EXPORT_OK = qw(load_plugins MODIFY_CODE_ATTRIBUTES);
+our %EXPORT_TAGS = ( manager => [ qw(load_plugins) ],
+                     plugin  => [ qw(MODIFY_CODE_ATTRIBUTES) ],
+                     );
 
 my %attributes;
 

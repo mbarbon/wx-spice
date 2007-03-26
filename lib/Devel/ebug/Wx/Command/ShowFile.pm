@@ -1,7 +1,7 @@
 package Devel::ebug::Wx::Command::ShowFile;
 
 use strict;
-use Devel::ebug::Wx::Plugin::Base;
+use Devel::ebug::Wx::Plugin::Base qw(:plugin);
 
 use Wx qw(:id);
 

@@ -1,7 +1,7 @@
 package Devel::ebug::Wx::Command::Run;
 
 use strict;
-use Devel::ebug::Wx::Plugin::Base;
+use Devel::ebug::Wx::Plugin::Base qw(:plugin);
 
 sub commands : Command {
     return
