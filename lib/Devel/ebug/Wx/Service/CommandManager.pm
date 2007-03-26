@@ -2,11 +2,11 @@ package Devel::ebug::Wx::Service::CommandManager;
 
 use strict;
 use base qw(Devel::ebug::Wx::Service::Base);
+use Devel::ebug::Wx::Plugin::Base qw(:manager);
 
-use Module::Pluggable
-      sub_name    => 'commands',
-      search_path => 'Devel::ebug::Wx::Command',
-      require     => 1;
+load_plugins( search_path => 'Devel::ebug::Wx::Command',
+              require     => 1,
+              );
 
 __PACKAGE__->mk_accessors( qw(wxebug key_map _menu_tree) );
 
@@ -61,17 +61,13 @@ sub _build_menu {
 
 sub _setup_commands {
     my( $self ) = @_;
-    my @commands = $self->commands;
     my( %key_map, %menu_tree, %cmds );
 
     # passing $wxebug here is correct because a command might
     # want to act on a single instance
     # FIXME: duplicates?
-    %cmds = ( ( map  $_->register_commands( $self->wxebug ),
-                grep $_->can( 'register_commands' ),
-                     @commands ),
-              ( map  $_->( $self->wxebug ),
-                     Devel::ebug::Wx::Plugin::Base->commands ) );
+    %cmds = map $_->( $self->wxebug ),
+                Devel::ebug::Wx::Plugin::Base->commands;
     foreach my $id ( grep $cmds{$_}{key}, keys %cmds ) {
         $key_map{$cmds{$id}{key}} = $cmds{$id};
     }

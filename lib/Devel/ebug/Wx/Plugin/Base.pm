@@ -1,11 +1,20 @@
 package Devel::ebug::Wx::Plugin::Base;
 
 use strict;
-use Exporter qw(import);
+use base qw(Exporter);
 
 our @EXPORT = qw(MODIFY_CODE_ATTRIBUTES);
+our @EXPORT_OK = qw(load_plugins);
+our %EXPORT_TAGS = ( 'manager' => [ qw(load_plugins) ], );
 
 my %attributes;
+
+sub load_plugins {
+    my( %args ) = @_;
+
+    require Module::Pluggable::Object;
+    Module::Pluggable::Object->new( %args )->plugins;
+}
 
 sub MODIFY_CODE_ATTRIBUTES {
     my( $class, $code, @attrs ) = @_;
