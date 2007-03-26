@@ -4,9 +4,7 @@ use strict;
 use base qw(Devel::ebug::Wx::Service::Base);
 use Devel::ebug::Wx::Plugin::Base qw(:manager);
 
-load_plugins( search_path => 'Devel::ebug::Wx::Command',
-              require     => 1,
-              );
+load_plugins( search_path => 'Devel::ebug::Wx::Command' );
 
 __PACKAGE__->mk_accessors( qw(wxebug key_map _menu_tree) );
 

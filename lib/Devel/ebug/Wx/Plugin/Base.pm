@@ -13,7 +13,7 @@ sub load_plugins {
     my( %args ) = @_;
 
     require Module::Pluggable::Object;
-    Module::Pluggable::Object->new( %args )->plugins;
+    Module::Pluggable::Object->new( %args, require => 1 )->plugins;
 }
 
 sub MODIFY_CODE_ATTRIBUTES {
