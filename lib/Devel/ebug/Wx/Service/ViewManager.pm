@@ -2,6 +2,7 @@ package Devel::ebug::Wx::Service::ViewManager;
 
 use strict;
 use base qw(Devel::ebug::Wx::Service::Base);
+use Devel::ebug::Wx::Plugin qw(:manager :plugin);
 
 use Wx::AUI;
 
@@ -37,17 +38,13 @@ between sessions.
 
 =cut
 
-use Module::Pluggable
-      sub_name    => '_views',
-      search_path => 'Devel::ebug::Wx::View',
-      require     => 1,
-      except      => qr/::Code::|::SUPER$/;
+load_plugins( search_path => 'Devel::ebug::Wx::View' );
 
 __PACKAGE__->mk_accessors( qw(wxebug active_views manager pane_info) );
 
-sub views { grep !$_->abstract, $_[0]->_views }
+sub views { Devel::ebug::Wx::Plugin->view_classes }
 
-sub service_name { 'view_manager' }
+sub service_name : Service { 'view_manager' }
 
 sub initialize {
     my( $self, $wxebug ) = @_;

@@ -2,6 +2,7 @@ package Devel::ebug::Wx::View::Eval;
 
 use strict;
 use base qw(Wx::Panel Devel::ebug::Wx::View::Base);
+use Devel::ebug::Wx::Plugin qw(:plugin);
 
 __PACKAGE__->mk_accessors( qw(display input display_mode) );
 
@@ -11,7 +12,7 @@ use Wx::Event qw(EVT_BUTTON);
 sub tag         { 'eval' }
 sub description { 'Eval' }
 
-sub new {
+sub new : View {
     my( $class, $parent, $wxebug, $layout_state ) = @_;
     my $self = $class->SUPER::new( $parent, -1 );
 

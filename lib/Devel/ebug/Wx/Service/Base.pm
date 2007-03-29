@@ -28,8 +28,6 @@ Useful superclass for all services.
 
 __PACKAGE__->mk_accessors( qw(initialized finalized) );
 
-sub abstract { __PACKAGE__ eq $_[0] }
-
 # empty base implementations
 sub initialize { my( $self, $wxebug ) = @_; }
 sub load_state { my( $self ) = @_; }

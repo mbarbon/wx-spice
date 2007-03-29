@@ -2,6 +2,7 @@ package Devel::ebug::Wx::View::Output;
 
 use strict;
 use base qw(Wx::Panel Devel::ebug::Wx::View::Base);
+use Devel::ebug::Wx::Plugin qw(:plugin);
 
 __PACKAGE__->mk_ro_accessors( qw(stdout stderr) );
 
@@ -11,7 +12,7 @@ use Wx::Event qw(EVT_BUTTON);
 sub tag         { 'output' }
 sub description { 'Console output' }
 
-sub new {
+sub new : View {
     my( $class, $parent, $wxebug, $layout_state ) = @_;
     my $self = $class->SUPER::new( $parent, -1 );
 

@@ -2,6 +2,7 @@ package Devel::ebug::Wx::View::Expressions;
 
 use strict;
 use base qw(Wx::Panel Devel::ebug::Wx::View::Base);
+use Devel::ebug::Wx::Plugin qw(:plugin);
 
 # FIXME: ought to be a service, too
 __PACKAGE__->mk_accessors( qw(tree _expressions) );
@@ -29,7 +30,7 @@ sub _call_on_idle($&) {
     EVT_IDLE( $window, $callback );
 }
 
-sub new {
+sub new : View {
     my( $class, $parent, $wxebug, $layout_state ) = @_;
     my $self = $class->SUPER::new( $parent, -1 );
 

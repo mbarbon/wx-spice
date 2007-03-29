@@ -22,7 +22,6 @@ sub _setup_destroy {
 sub is_managed   { !$_[0]->GetParent->isa( 'Wx::AuiNotebook' ) }
 sub is_multiview { 0 }
 sub default_size { ( 350, 250 ) }
-sub abstract     { $_[0] eq __PACKAGE__ }
 
 # save/restore view layout
 sub set_layout_state { }

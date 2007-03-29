@@ -2,6 +2,7 @@ package Devel::ebug::Wx::Service::Configuration;
 
 use strict;
 use base qw(Devel::ebug::Wx::Service::Base);
+use Devel::ebug::Wx::Plugin qw(:plugin);
 
 =head1 NAME
 
@@ -31,7 +32,7 @@ use File::UserConfig;
 use Config::IniFiles;
 use File::Spec;
 
-sub service_name { 'configuration' }
+sub service_name : Service { 'configuration' }
 sub initialized  { 1 }
 sub finalized    { 0 }
 
@@ -94,8 +95,6 @@ use base qw(Class::Accessor::Fast);
 use YAML qw();
 
 __PACKAGE__->mk_ro_accessors( qw(inifile section) );
-
-sub abstract { 1 } # FIXME: use attributes
 
 sub new {
     my( $class, $inifile, $section ) = @_;

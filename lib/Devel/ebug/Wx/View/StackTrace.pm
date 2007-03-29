@@ -2,6 +2,7 @@ package Devel::ebug::Wx::View::StackTrace;
 
 use strict;
 use base qw(Wx::ListBox Devel::ebug::Wx::View::Base);
+use Devel::ebug::Wx::Plugin qw(:plugin);
 
 use File::Basename;
 
@@ -11,7 +12,7 @@ use Wx::Event qw(EVT_LISTBOX);
 sub tag         { 'stack' }
 sub description { 'Stack' }
 
-sub new {
+sub new : View {
     my( $class, $parent, $wxebug, $layout_state ) = @_;
     my $self = $class->SUPER::new( $parent, -1 );
 

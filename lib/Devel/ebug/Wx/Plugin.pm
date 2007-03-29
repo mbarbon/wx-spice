@@ -43,6 +43,7 @@ sub AUTOLOAD {
 sub _instantiators {
     my( $name ) = @_;
     $name =~ s/s$//;
+    my $is_class = $name =~ s/_classe$//;
 
     my @rv;
     foreach my $c ( keys %attributes ) {
@@ -50,9 +51,13 @@ sub _instantiators {
         foreach my $v ( values %{$attributes{$c}} ) {
             my( $code, $attrs ) = @$v;
             next unless grep lc( $_ ) eq $name, @$attrs;
-            push @rv, sub {
-                $code->( $class, @_ );
-            };
+            if( $is_class ) {
+                push @rv, $class;
+            } else {
+                push @rv, sub {
+                    $code->( $class, @_ );
+                };
+            }
         }
     }
 

@@ -2,7 +2,7 @@ package Devel::ebug::Wx::Service::CommandManager;
 
 use strict;
 use base qw(Devel::ebug::Wx::Service::Base);
-use Devel::ebug::Wx::Plugin qw(:manager);
+use Devel::ebug::Wx::Plugin qw(:manager :plugin);
 
 load_plugins( search_path => 'Devel::ebug::Wx::Command' );
 
@@ -11,7 +11,7 @@ __PACKAGE__->mk_accessors( qw(wxebug key_map _menu_tree) );
 use Wx qw(:menu);
 use Wx::Event qw(EVT_MENU EVT_UPDATE_UI);
 
-sub service_name { 'command_manager' }
+sub service_name : Service { 'command_manager' }
 
 sub initialize {
     my( $self, $wxebug ) = @_;

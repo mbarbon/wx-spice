@@ -4,6 +4,7 @@ use Wx::AUI;
 
 use strict;
 use base qw(Wx::AuiNotebook Devel::ebug::Wx::View::Multi);
+use Devel::ebug::Wx::Plugin qw(:plugin);
 
 __PACKAGE__->mk_accessors( qw(has_views) );
 
@@ -13,7 +14,7 @@ use Wx::Event qw(EVT_RIGHT_UP EVT_MENU);
 sub tag_base         { 'notebook' }
 sub description_base { 'Notebook' }
 
-sub new {
+sub new : View {
     my( $class, $parent, $wxebug, $layout_state ) = @_;
     my $self = $class->SUPER::new( $parent, -1, [-1, -1], [-1, -1],
                                    wxAUI_NB_TAB_MOVE|wxAUI_NB_CLOSE_BUTTON|
