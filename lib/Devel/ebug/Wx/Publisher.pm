@@ -33,6 +33,13 @@ sub DESTROY {
     $self->SUPER::DESTROY;
 }
 
+sub can {
+    my( $self, $method ) = @_;
+    my $can = $self->SUPER::can( $method );
+    return $can if $can;
+    return 1 if $self->ebug->can( $method ); # FIXME return coderef
+}
+
 # FIXME: does not scale when additional ebug plugins are loaded
 #        maybe needs another level of plugins :-(
 my %no_notify =
