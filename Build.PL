@@ -18,6 +18,8 @@ my $build = new Module::Build
                        'YAML'                  => 0.60,
                        'Config::IniFiles'      => 2.00,
                        'File::UserConfig'      => 0.04,
+                       'Devel::Symdump'        => 2.07,
+                       'Wx::Perl::TreeView'    => 0.01,
                        },
       build_requires => { 'Test::UseAllModules' => 0,
                           },
