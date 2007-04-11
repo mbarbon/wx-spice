@@ -6,7 +6,7 @@ use strict;
 use warnings;
 use base qw(Wx::Frame Devel::ebug::Wx::Service::Base Class::Accessor::Fast);
 
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 
 use Wx qw(:aui wxOK);
 use Wx::Event qw(EVT_CLOSE);
