@@ -7,10 +7,12 @@ Makefile.PL
 bin/ebug_wx
 lib/Devel/ebug/Backend/Plugin/EvalLevel.pm
 lib/Devel/ebug/Backend/Plugin/State.pm
+lib/Devel/ebug/Backend/Plugin/SymbolBrowser.pm
 lib/Devel/ebug/Backend/Plugin/Wx.pm
 lib/Devel/ebug/Plugin/EvalLevel.pm
 lib/Devel/ebug/Plugin/FoldedStackTrace.pm
 lib/Devel/ebug/Plugin/State.pm
+lib/Devel/ebug/Plugin/SymbolBrowser.pm
 lib/Devel/ebug/Plugin/Wx.pm
 lib/Devel/ebug/Wx.pm
 lib/Devel/ebug/Wx/Command/NotebookEdit.pm
@@ -35,6 +37,7 @@ lib/Devel/ebug/Wx/View/Expressions.pm
 lib/Devel/ebug/Wx/View/Multi.pm
 lib/Devel/ebug/Wx/View/Notebook.pm
 lib/Devel/ebug/Wx/View/Output.pm
+lib/Devel/ebug/Wx/View/PackageBrowser.pm
 lib/Devel/ebug/Wx/View/StackTrace.pm
 t/001_load.t
 t/zzz_pod.t
