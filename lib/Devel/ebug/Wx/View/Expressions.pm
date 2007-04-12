@@ -161,7 +161,7 @@ sub refresh {
         my $child = $tree->AppendItem( $root, $e->{expression}, -1, -1,
                                        Wx::TreeItemData->new( $e ) );
         my( $val, $ex ) = $self->ebug->eval_level( $e->{expression},
-                                                   $e->{level} );
+                                                   $e->{level} + 1 );
         if( $ex ) {
             chomp $val;
             $tree->SetItemText( $child, "$e->{expression} = $val"  );

@@ -69,6 +69,7 @@ sub project {
               string => "$v",
               };
 
+    return $r unless $l;
     if( _cc( $v ) >= 0 ) {
         $r->{keys} = [];
         foreach my $kv ( @{_ckv( $v )} ) {
