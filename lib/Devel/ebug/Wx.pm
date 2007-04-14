@@ -106,8 +106,6 @@ for example for code-viewing, gui management, view management
 allow enabling/disabling services, commands, views
 auto-disable commands/views/services with clashing identifiers
 
-=item * add more views (package browser)
-
 =item * configuration interface
 
 ConfigurationManager service; lists all configuration views
