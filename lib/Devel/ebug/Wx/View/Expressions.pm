@@ -1,20 +1,21 @@
 package Devel::ebug::Wx::View::Expressions;
 
+use Wx;
+
 use strict;
 use base qw(Wx::Panel Devel::ebug::Wx::View::Base);
 
 # FIXME: ought to be a service, too
-__PACKAGE__->mk_accessors( qw(tree _expressions) );
+__PACKAGE__->mk_accessors( qw(tree model) );
 
 use Wx qw(:treectrl :textctrl :sizer WXK_DELETE);
 use Wx::Event qw(EVT_BUTTON EVT_TREE_ITEM_EXPANDING EVT_TEXT_ENTER
                  EVT_TREE_BEGIN_LABEL_EDIT EVT_TREE_END_LABEL_EDIT
                  EVT_TREE_KEY_DOWN);
+use Wx::Perl::TreeView;
 
 sub tag         { 'expressions' }
 sub description { 'Expressions' }
-
-sub expressions { @{$_[0]->_expressions} }
 
 # FIXME backport to wxPerl
 sub _call_on_idle($&) {
@@ -34,10 +35,14 @@ sub new {
     my $self = $class->SUPER::new( $parent, -1 );
 
     $self->wxebug( $wxebug );
-    $self->_expressions( [] );
-    $self->{tree} = Wx::TreeCtrl->new( $self, -1, [-1,-1], [-1,-1],
+    my $tree = Wx::TreeCtrl->new( $self, -1, [-1,-1], [-1,-1],
                                        wxTR_HIDE_ROOT | wxTR_HAS_BUTTONS |
                                        wxTR_EDIT_LABELS );
+    $self->{model} = Devel::ebug::Wx::View::Expressions::Model->new
+                          ( { _expressions => [],
+                              _values      => [],
+                              ebug         => $self->ebug } );
+    $self->{tree} = Wx::Perl::TreeView->new( $tree, $self->model );
 
     my $refresh = Wx::Button->new( $self, -1, 'Refresh' );
     my $add = Wx::Button->new( $self, -1, 'Add' );
@@ -50,15 +55,13 @@ sub new {
     $cntrl->Add( $add, 0, 0 );
     $cntrl->Add( $expression, 1, 0 );
     $sz->Add( $cntrl, 0, wxGROW );
-    $sz->Add( $self->tree, 1, wxGROW );
+    $sz->Add( $self->tree->treectrl, 1, wxGROW );
     $self->SetSizer( $sz );
 
     $self->subscribe_ebug( 'state_changed', sub { $self->_refresh( @_ ) } );
     $self->set_layout_state( $layout_state ) if $layout_state;
     $self->register_view;
-    $self->tree->AddRoot( '' );
 
-    EVT_TREE_ITEM_EXPANDING( $self, $self->tree, \&_on_expand );
     EVT_BUTTON( $self, $refresh, sub { $self->refresh } );
     EVT_BUTTON( $self, $add, sub {
                     $self->add_expression( $expression->GetValue );
@@ -77,22 +80,20 @@ sub new {
 sub get_state {
     my( $self ) = @_;
 
-    return $self->_expressions;
+    return $self->model->_expressions;
 }
 
 sub set_state {
     my( $self, $state ) = @_;
 
-    $self->{_expressions} = $state; # FIXME check
+    $self->model->{_expressions} = $state; # FIXME check
     $self->refresh;
 }
 
 sub add_expression {
     my( $self, $expression ) = @_;
 
-    push @{$self->_expressions}, { expression => $expression,
-                                   level      => 0,
-                                   };
+    $self->model->add_expression( $expression );
     $self->refresh;
 }
 
@@ -106,8 +107,7 @@ sub _key_down {
     return unless $event->GetKeyCode == WXK_DELETE;
     my $item = $event->GetItem || $self->tree->GetSelection;
     return unless _is_expression( $self->tree, $item );
-    my $expression = $self->tree->GetPlData( $item );
-    $self->_expressions( [ grep $_ ne $expression, $self->expressions ] );
+    $self->model->delete_expression( $self->tree->GetPlData( $item ) );
     _call_on_idle $self, sub { $self->refresh };
 }
 
@@ -131,20 +131,6 @@ sub _end_edit {
     _call_on_idle $self, sub { $self->refresh };
 }
 
-sub _on_expand {
-    my( $self, $event ) = @_;
-    return if $self->{_expanding}; # avoid processing while in refresh
-
-    my( $item ) = $event->GetItem;
-    my( $root, $expr_item, $level ) = ( $self->tree->GetRootItem, $item, 1 );
-    while( $root != ( $item = $self->tree->GetItemParent( $item ) ) ) {
-        ++$level;
-        $expr_item = $item;
-    }
-    $self->tree->GetPlData( $expr_item )->{level} = $level;
-    $self->refresh;
-}
-
 sub _refresh {
     my( $self, $ebug, $event, %params ) = @_;
 
@@ -153,35 +139,90 @@ sub _refresh {
 
 sub refresh {
     my( $self ) = @_;
-    my $tree = $self->tree;
 
-    my $root = $tree->GetRootItem;
-    $tree->DeleteChildren( $root );
-    foreach my $e ( $self->expressions ) {
-        my $child = $tree->AppendItem( $root, $e->{expression}, -1, -1,
-                                       Wx::TreeItemData->new( $e ) );
-        my( $val, $ex ) = $self->ebug->eval_level( $e->{expression},
-                                                   $e->{level} + 1 );
-        if( $ex ) {
-            chomp $val;
-            $tree->SetItemText( $child, "$e->{expression} = $val"  );
-        } else {
-            $tree->SetItemText( $child, "$e->{expression} = $val->{string}"  );
-            $self->_add_childs( $child, $val, $e->{level} ) if $val->{keys}
-        }
-    }
+    $self->model->{_values} = [];
+    $self->tree->refresh;
 }
 
-sub _add_childs {
-    my( $self, $item, $data, $level ) = @_;
-    local $self->{_expanding} = $self->{_expanding} + 1;
-    my( $elts ) = $data->{keys};
-    $self->tree->DeleteChildren( $item );
-    foreach my $el ( @$elts ) {
-        my $child = $self->tree->AppendItem( $item, $el->[0] . ' => ' . $el->[1]->{string} );
-        $self->_add_childs( $child, $el->[1], $level ) if $el->[1]{keys};
+package Devel::ebug::Wx::View::Expressions::Model;
+
+use strict;
+use base qw(Wx::Perl::TreeView::Model Class::Accessor::Fast);
+
+__PACKAGE__->mk_ro_accessors( qw(_expressions _values ebug) );
+
+sub abstract { 1 } # FIXME
+
+sub expressions { @{$_[0]->_expressions} }
+
+sub add_expression {
+    my( $self, $expression ) = @_;
+
+    push @{$self->_expressions}, { expression => $expression,
+                                   level      => 0,
+                                   };
+}
+
+sub delete_expression {
+    my( $self, $expression ) = @_;
+
+    $self->_expressions( [ grep $_ ne $expression, $self->expressions ] );
+}
+
+sub get_root { return ( '', 'root', undef, undef ) }
+
+sub _get {
+    my( $self, $index, $level ) = @_;
+    my $e = $self->_expressions->[$index];
+    if( $e->{level} < $level ) {
+        $e->{level} = $level + 1;
+        $self->_values->[$index] = undef;
     }
-    $self->tree->Expand( $item ) if $self->{_expanding} <= $level;
+    my $r = $self->_values->[$index] ||=
+        [ reverse
+              $self->ebug->eval_level( $e->{expression}, $e->{level} ) ];
+    return ( $e, $r );
+}
+
+sub _find_node {
+    my( $self, $cookie, $more ) = @_;
+    my( $expr, @path ) = split /,/, $cookie;
+    my( $e, $r ) = _get( $self, $expr, @path + $more );
+    return _traverse( $self, $r, @path );
+}
+
+sub _traverse {
+    my( $self, $r, @path ) = @_;
+    return $r if @path == 0;
+    return unless ref( $r->[1] ) && $r->[1]{keys};
+    my $index = shift @path;
+    return $r->[1]{keys}[$index] if @path == 0;
+    return _traverse( $self, $r->[1]{keys}[$index], @path );
+}
+
+sub get_child_count {
+    my( $self, $cookie ) = @_;
+    return scalar $self->expressions unless length $cookie;
+    my $node = _find_node( $self, $cookie, -1 );
+    return 0 if $cookie !~ /,/ && $node->[0];
+    return $node->[1]{childs} || scalar @{$node->[1]{keys} || []};
+}
+
+sub get_child {
+    my( $self, $cookie, $index ) = @_;
+
+    if( !length $cookie ) {
+        my( $e, $r ) = _get( $self, $index, 0 );
+        if( $r->[0] ) {
+            chomp $r->[1];
+            return ( $index, "$e->{expression} = $r->[1]", undef, $e );
+        } else {
+            return ( $index, "$e->{expression} = $r->[1]->{string}", undef, $e );
+        }
+    } else {
+        my $el = _find_node( $self, "$cookie,$index", 0 );
+        return ( "$cookie,$index", $el->[0] . ' => ' . $el->[1]->{string} );
+    }
 }
 
 1;

@@ -22,6 +22,7 @@ my $build = new Module::Build
                        'Wx::Perl::TreeView'    => 0.01,
                        },
       build_requires => { 'Test::UseAllModules' => 0,
+                          'Test::Differences'   => 0,
                           },
       create_makefile_pl => 'passthrough',
       no_index           => { package =>
