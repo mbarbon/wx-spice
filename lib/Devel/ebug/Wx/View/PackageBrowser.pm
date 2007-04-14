@@ -59,7 +59,7 @@ sub _show_sub {
         return;
     }
 
-    my $cookie = $self->tree->GetPlData( $event->GetItem );
+    my $cookie = $self->tree->get_cookie( $event->GetItem );
     $cookie =~ s/^&:://;
     my( $filename, $start, $end ) = $self->ebug->subroutine_info( $cookie );
     return unless $filename && $start;
