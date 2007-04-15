@@ -31,7 +31,6 @@ lib/Devel/ebug/Wx/ServiceManager.pm
 lib/Devel/ebug/Wx/View/Base.pm
 lib/Devel/ebug/Wx/View/Breakpoints.pm
 lib/Devel/ebug/Wx/View/Code/STC.pm
-lib/Devel/ebug/Wx/View/Code/STC.pm
 lib/Devel/ebug/Wx/View/Eval.pm
 lib/Devel/ebug/Wx/View/Expressions.pm
 lib/Devel/ebug/Wx/View/Multi.pm

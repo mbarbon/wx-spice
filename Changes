@@ -1,6 +1,6 @@
 Revision history for Perl extension Devel::ebug::Wx.
 
-0.07
+0.07  Sun Apr 15 17:16:47 CEST 2007
 	- Added a package/subroutine browser.
 	- Improved visualization for hash/array in expression
 	  view.
