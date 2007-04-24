@@ -23,8 +23,7 @@ my $build = new Module::Build
                           },
       create_makefile_pl => 'passthrough',
       no_index           => { package =>
-                              [ 'Devel::ebug::Backend::Plugin::ActionPoints',
-                                'DB',
+                              [ 'DB',
                                 ],
                               },
     );
