@@ -176,6 +176,7 @@ sub _constant {
     return &{"Wx::wxSTC_PL_" . uc( $k )}();
 }
 
+no warnings qw(qw);
 my @style_keys =
   ( qw(default error commentline pod number word string character
        punctuation preprocessor operator identifier scalar array regex
