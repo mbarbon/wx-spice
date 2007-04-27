@@ -46,7 +46,7 @@ sub file_name {
 }
 
 sub new {
-    my( $class, $wxebug ) = @_;
+    my( $class ) = @_;
     my $self = $class->SUPER::new;
     my $file = $class->file_name;
 
