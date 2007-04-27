@@ -6,6 +6,7 @@ branch:
 	  attributes.
 	- Add configuration manager service and configuration
 	  dialog to manage user-configurable options.
+	- Make the eval and code display views partially configurable.
 
 0.05  Mon Mar 19 22:05:24 CET 2007
 	- Keep breakpoints when program is restarted.

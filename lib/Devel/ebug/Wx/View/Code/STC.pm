@@ -5,7 +5,9 @@ use Wx::STC;
 # FIXME split in a fully-fledged view linked to the code display service
 #       and a simple code-edit/display control
 use strict;
-use base qw(Wx::StyledTextCtrl Devel::ebug::Wx::View::Base);
+use base qw(Wx::StyledTextCtrl Devel::ebug::Wx::View::Base
+            Devel::ebug::Wx::Plugin::Configurable::Base);
+use Devel::ebug::Wx::Plugin qw(:plugin);
 
 __PACKAGE__->mk_accessors( qw(filename line highlighted_line) );
 
@@ -28,12 +30,14 @@ sub new {
     $self->highlighted_line( 0 );
     $self->wxebug( $wxebug );
 
-    $self->_setup_stc;
-
     $self->subscribe_ebug( 'file_changed', sub { $self->_show_code( @_ ) } );
     $self->subscribe_ebug( 'line_changed', sub { $self->_show_line( @_ ) } );
     $self->subscribe_ebug( 'break_point', sub { $self->_break_point( @_ ) } );
     $self->subscribe_ebug( 'break_point_delete', sub { $self->_break_point( @_ ) } );
+
+    $self->register_configurable;
+    $self->_setup_stc( $self->get_configuration
+                           ( $self->wxebug->service_manager ) );
 
     return $self;
 }
@@ -114,35 +118,19 @@ sub highlight_line {
     $self->highlighted_line( $line );
 }
 
-# FIXME make it configurable with a default
+# FIXME finish moving to configuration
 sub _setup_stc {
-    my( $self ) = @_;
+    my( $self, $configuration ) = @_;
     my $font = Wx::Font->new( 10, wxTELETYPE, wxNORMAL, wxNORMAL );
 
     $self->SetFont( $font );
     $self->StyleSetFont( wxSTC_STYLE_DEFAULT, $font );
     $self->StyleClearAll();
 
-    $self->StyleSetSpec( wxSTC_PL_DEFAULT, 'fore:#00007f' );
-    $self->StyleSetSpec( wxSTC_PL_ERROR, 'fore:#ff0000' );
-    $self->StyleSetSpec( wxSTC_PL_COMMENTLINE, 'fore:#007f00' );
-    $self->StyleSetSpec( wxSTC_PL_POD, 'fore:#7f7f7f' );
-    $self->StyleSetSpec( wxSTC_PL_NUMBER, 'fore:#007f7f' );
-    $self->StyleSetSpec( wxSTC_PL_WORD, 'fore:#00007f' );
-    $self->StyleSetSpec( wxSTC_PL_STRING, 'fore:#ff7f00' );
-    $self->StyleSetSpec( wxSTC_PL_CHARACTER, 'fore:#7f007f' );
-    $self->StyleSetSpec( wxSTC_PL_PUNCTUATION, 'fore:#000000' );
-    $self->StyleSetSpec( wxSTC_PL_PREPROCESSOR, 'fore:#7f7f7f' );
-    $self->StyleSetSpec( wxSTC_PL_OPERATOR, 'fore:#00007f' );
-    $self->StyleSetSpec( wxSTC_PL_IDENTIFIER, 'fore:#00007f' );
-    $self->StyleSetSpec( wxSTC_PL_SCALAR, 'fore:#7f007f,bold' );
-    $self->StyleSetSpec( wxSTC_PL_ARRAY, 'fore:#4080ff,bold' );
-    $self->StyleSetSpec( wxSTC_PL_REGEX, 'fore:#ff007f' );
-    $self->StyleSetSpec( wxSTC_PL_REGSUBST, 'fore:#7f7f00' );
+    $self->apply_configuration( $configuration );
 
     $self->SetLexer( wxSTC_LEX_PERL );
 
-    # FIXME colors and markers configurable?
     $self->MarkerDefine( CURRENT_LINE, 2,  Wx::wxGREEN, Wx::wxNullColour );
     $self->MarkerDefine( BREAKPOINT  , 0,  Wx::wxBLUE, Wx::wxNullColour );
     $self->MarkerDefine( BACKGROUND  , 22, Wx::wxNullColour, Wx::Colour->new( 0x90, 0x90, 0x90 ) );
@@ -178,6 +166,56 @@ sub _set_bp {
         $self->ebug->break_point_delete( $self->filename, $stc_line + 1 );
     } else {
         $self->ebug->break_point( $self->filename, $stc_line + 1 );
+    }
+}
+
+sub _constant {
+    my( $k ) = @_;
+
+    no strict 'refs';
+    return &{"Wx::wxSTC_PL_" . uc( $k )}();
+}
+
+my @style_keys =
+  ( qw(default error commentline pod number word string character
+       punctuation preprocessor operator identifier scalar array regex
+       regsubst)
+    );
+my @defaults =
+  ( qw(fore:#00007f fore:#ff0000 fore:#007f00 fore:#7f7f7f fore:#007f7f
+       fore:#00007f fore:#ff7f00 fore:#7f007f fore:#000000 fore:#7f7f7f
+       fore:#00007f fore:#00007f fore:#7f007f,bold fore:#4080ff,bold
+       fore:#ff007f fore:#7f7f00)
+    );
+
+sub get_configuration_keys {
+    my( $class ) = @_;
+
+    my @keys = map { key     => $style_keys[$_],
+                     type    => 'string',
+                     label   => ucfirst( $style_keys[$_] ),
+                     default => $defaults[$_],
+                     },
+                   ( 0 .. $#style_keys );
+    return { label   => 'Code display',
+             section => 'code_stc_view',
+             keys    => \@keys,
+             };
+}
+
+sub configuration : Configurable {
+    my( $class ) = @_;
+
+    return { configurable => __PACKAGE__,
+             configurator => 'configuration_simple',
+             };
+}
+
+sub apply_configuration {
+    my( $self, $data ) = @_;
+
+    foreach my $key ( @{$data->{keys}} ) {
+        $self->StyleSetSpec( _constant( $key->{key} ), $key->{value} );
     }
 }
 
