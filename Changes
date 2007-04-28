@@ -1,5 +1,7 @@
 Revision history for Perl extension Devel::ebug::Wx.
 
+0.09
+
 0.08  Sat Apr 28 16:02:36 CEST 2007
 	- Add configuration manager service and configuration
 	  dialog to manage user-configurable options.

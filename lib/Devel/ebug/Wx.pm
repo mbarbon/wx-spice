@@ -5,7 +5,7 @@ use Wx;
 use strict;
 use base qw(Wx::Frame Devel::ebug::Wx::Service::Base Class::Accessor::Fast);
 
-our $VERSION = '0.08';
+our $VERSION = '0.09';
 
 use Wx qw(:aui wxOK);
 use Wx::Event qw(EVT_CLOSE);
@@ -33,8 +33,8 @@ sub new {
     $self->service_manager->initialize;
     $self->service_manager->load_configuration;
 
-    $self->ebug->add_subscriber( 'load_program', sub { $self->_pgm_load( @_ ) } );
-    $self->ebug->add_subscriber( 'finished', sub { $self->_pgm_stop( @_ ) } );
+    $self->ebug->add_subscriber( 'load_program', $self, '_pgm_load' );
+    $self->ebug->add_subscriber( 'finished', $self, '_pgm_stop' );
 
     $self->SetMenuBar( $self->command_manager_service->get_menu_bar );
 
