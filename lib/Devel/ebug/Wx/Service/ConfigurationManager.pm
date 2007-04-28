@@ -5,7 +5,7 @@ use base qw(Devel::ebug::Wx::Service::Base);
 use Devel::ebug::Wx::Plugin qw(:plugin);
 use Devel::ebug::Wx::ServiceManager::Holder;
 
-__PACKAGE__->mk_accessors( qw(wxebug _configurations) );
+__PACKAGE__->mk_accessors( qw(_configurations) );
 
 sub service_name : Service { 'configuration_manager' }
 
@@ -14,7 +14,6 @@ my %configurators;
 sub initialize {
     my( $self, $manager ) = @_;
 
-    $self->wxebug( $manager->get_service( 'ebug_wx' ) );
     foreach my $class ( Devel::ebug::Wx::Plugin->configuration_classes ) {
         $configurators{$class->tag} = $class;
     }
