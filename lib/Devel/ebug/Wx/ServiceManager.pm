@@ -2,6 +2,7 @@ package Devel::ebug::Wx::ServiceManager;
 
 use strict;
 use base qw(Class::Accessor::Fast);
+use Devel::ebug::Wx::Plugin qw(:manager);
 
 =head1 NAME
 
@@ -27,10 +28,7 @@ C<get_service> to retrieve a service instance.
 
 =cut
 
-use Module::Pluggable
-      sub_name    => '_services',
-      search_path => 'Devel::ebug::Wx::Service',
-      require     => 1;
+load_plugins( search_path => 'Devel::ebug::Wx::Service' );
 
 __PACKAGE__->mk_ro_accessors( qw(_active_services _wxebug) );
 
@@ -49,7 +47,7 @@ Returns a list of services currently registered with the service manager.
 =cut
 
 sub active_services { @{$_[0]->_active_services} }
-sub services { grep !$_->abstract, $_[0]->_services }
+sub services { Devel::ebug::Wx::Plugin->service_classes }
 sub add_service { push @{$_[0]->_active_services}, $_[1] }
 
 sub new {
@@ -172,9 +170,12 @@ package Devel::ebug::Wx::ServiceManager::Holder;
 use strict;
 use base qw(Exporter);
 
-$INC{'Devel/ebug/Wx/ServiceManager/Holder.pm'} = __FILE__;
-our @EXPORT = qw(AUTOLOAD service_manager get_service);
-our %EXPORT_TAGS = ( 'noautoload' => [ qw(service_manager get_service) ] );
+our( @EXPORT, %EXPORT_TAGS );
+BEGIN {
+    $INC{'Devel/ebug/Wx/ServiceManager/Holder.pm'} = __FILE__;
+    @EXPORT = qw(AUTOLOAD service_manager get_service);
+    %EXPORT_TAGS = ( 'noautoload' => [ qw(service_manager get_service) ] );
+}
 
 sub service_manager { # the usual getter/setter
     return $_[0]->{service_manager} = $_[1] if @_ > 1;

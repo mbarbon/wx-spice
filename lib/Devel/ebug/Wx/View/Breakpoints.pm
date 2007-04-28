@@ -2,6 +2,7 @@ package Devel::ebug::Wx::View::Breakpoints;
 
 use strict;
 use base qw(Wx::ScrolledWindow Devel::ebug::Wx::View::Base);
+use Devel::ebug::Wx::Plugin qw(:plugin);
 
 __PACKAGE__->mk_accessors( qw(panes sizer) );
 
@@ -10,7 +11,7 @@ use Wx qw(:sizer);
 sub tag         { 'breakpoints' }
 sub description { 'Breakpoints' }
 
-sub new {
+sub new : View {
     my( $class, $parent, $wxebug, $layout_state ) = @_;
     my $self = $class->SUPER::new( $parent, -1 );
 

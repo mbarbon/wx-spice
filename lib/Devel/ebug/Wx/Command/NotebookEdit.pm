@@ -1,8 +1,9 @@
 package Devel::ebug::Wx::Command::NotebookEdit;
 
 use strict;
+use Devel::ebug::Wx::Plugin qw(:plugin);
 
-sub register_commands {
+sub command : Command {
     my( $class, $wxebug ) = @_;
 
     return ( 'edit_notebook',

@@ -1,9 +1,9 @@
 package Devel::ebug::Wx::View::Base;
 
 use strict;
-use base qw(Class::Accessor::Fast);
+use base qw(Class::Accessor::Fast Devel::ebug::Wx::Plugin::Listener::Base);
 
-__PACKAGE__->mk_accessors( qw(wxebug _has_destroy _subscribed) );
+__PACKAGE__->mk_accessors( qw(wxebug _has_destroy) );
 
 # not yet in wxPerl
 sub EVT_DESTROY($$$) { $_[0]->Connect( $_[1], -1, &Wx::wxEVT_DESTROY, $_[2] ) }
@@ -12,7 +12,6 @@ sub _setup_destroy {
     my( $self ) = @_;
 
     unless( $self->_has_destroy ) {
-        $self->_subscribed( [] );
         $self->_has_destroy( 1 );
         EVT_DESTROY( $self, $self, \&_on_destroy );
     }
@@ -22,7 +21,6 @@ sub _setup_destroy {
 sub is_managed   { !$_[0]->GetParent->isa( 'Wx::AuiNotebook' ) }
 sub is_multiview { 0 }
 sub default_size { ( 350, 250 ) }
-sub abstract     { $_[0] eq __PACKAGE__ }
 
 # save/restore view layout
 sub set_layout_state { }
@@ -44,15 +42,13 @@ sub subscribe_ebug {
     my( $self, $event, $handler ) = @_;
 
     $self->_setup_destroy;
-    $self->ebug->add_subscriber( $event, $handler );
-    push @{$self->_subscribed}, [ $event, $handler ];
+    $self->add_subscription( $self->ebug, $event, $handler );
 }
 
 sub _on_destroy {
     my( $self ) = @_;
-    $self->ebug->delete_subscriber( @$_ ) foreach @{$self->_subscribed};
+    $self->delete_subscriptions;
     $self->wxebug->view_manager_service->unregister_view( $self );
-    $self->_subscribed( undef );
 }
 
 sub ebug { $_[0]->wxebug->ebug }

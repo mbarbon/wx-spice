@@ -97,8 +97,8 @@ to dock/undock and arrange views.
 
 =item * make a saner interface for plugins
 
-what do commands do; better registration interface
-allow generic plugins to offer views/commands/services at the same time
+command is just an action (coderef) with a string id
+command description ties commands to the CommandManager to create menus
 
 =item * define a service interface
 
@@ -108,10 +108,6 @@ auto-disable commands/views/services with clashing identifiers
 
 =item * configuration interface
 
-ConfigurationManager service; lists all configuration views
-attribute to define configuration views (different from normal views)
-automatically tie configurator to configurable object
-interface to notify of configuration changes
 allow a configuration view to configure multiple
   objects (by explicit registration)
 

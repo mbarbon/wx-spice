@@ -20,14 +20,14 @@ my $build = new Module::Build
                        'File::UserConfig'      => 0.04,
                        'Devel::Symdump'        => 2.07,
                        'Wx::Perl::TreeView'    => 0.01,
+                       'Devel::StackTrace'     => 1.14,
                        },
       build_requires => { 'Test::UseAllModules' => 0,
                           'Test::Differences'   => 0,
                           },
       create_makefile_pl => 'passthrough',
       no_index           => { package =>
-                              [ 'Devel::ebug::Backend::Plugin::ActionPoints',
-                                'DB',
+                              [ 'DB',
                                 ],
                               },
     );

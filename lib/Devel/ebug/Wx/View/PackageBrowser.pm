@@ -2,6 +2,7 @@ package Devel::ebug::Wx::View::PackageBrowser;
 
 use strict;
 use base qw(Wx::Panel Devel::ebug::Wx::View::Base);
+use Devel::ebug::Wx::Plugin qw(:plugin);
 
 __PACKAGE__->mk_accessors( qw(tree) );
 
@@ -12,7 +13,7 @@ use Wx::Perl::TreeView;
 sub tag         { 'package_browser' }
 sub description { 'Package Browser' }
 
-sub new {
+sub new : View {
     my( $class, $parent, $wxebug, $layout_state ) = @_;
     my $self = $class->SUPER::new( $parent, -1 );
 
@@ -74,9 +75,7 @@ use base qw(Wx::Perl::TreeView::Model Class::Accessor::Fast);
 
 __PACKAGE__->mk_ro_accessors( qw(ebug _last_cookie _last_answer) );
 
-sub abstract { 1 } # FIXME
-
-sub get_root { return '::main' }
+sub get_root { return ( '::main', '' ) }
 
 sub flush_cache {
     my( $self ) = @_;

@@ -30,11 +30,11 @@ sub service_name { 'ebug_publisher' }
 sub DESTROY {
     my ( $self ) = @_;
     $self->delete_all_subscribers;
-    $self->SUPER::DESTROY;
 }
 
 sub can {
     my( $self, $method ) = @_;
+    return undef if $method eq 'id';
     my $can = $self->SUPER::can( $method );
     return $can if $can;
     return 1 if $self->ebug->can( $method ); # FIXME return coderef

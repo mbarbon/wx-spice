@@ -1,7 +1,9 @@
 package Devel::ebug::Wx::View::Eval;
 
 use strict;
-use base qw(Wx::Panel Devel::ebug::Wx::View::Base);
+use base qw(Wx::Panel Devel::ebug::Wx::View::Base
+            Devel::ebug::Wx::Plugin::Configurable::Base);
+use Devel::ebug::Wx::Plugin qw(:plugin);
 
 __PACKAGE__->mk_accessors( qw(display input display_mode) );
 
@@ -11,7 +13,7 @@ use Wx::Event qw(EVT_BUTTON);
 sub tag         { 'eval' }
 sub description { 'Eval' }
 
-sub new {
+sub new : View {
     my( $class, $parent, $wxebug, $layout_state ) = @_;
     my $self = $class->SUPER::new( $parent, -1 );
 
@@ -51,6 +53,10 @@ sub new {
 
     $self->SetSize( $self->default_size );
 
+    $self->register_configurable;
+    $self->apply_configuration( $self->get_configuration
+                                    ( $self->wxebug->service_manager ) );
+
     return $self;
 }
 
@@ -62,6 +68,37 @@ sub _eval {
     my $expr = $self->input->GetValue;
     my $v = $self->ebug->eval( sprintf $mode, $expr ) || "";
     $self->display->WriteText( $v );
+}
+
+sub configuration : Configurable {
+    my( $class ) = @_;
+
+    return { configurable => __PACKAGE__,
+             configurator => 'configuration_simple',
+             };
+}
+
+sub get_configuration_keys {
+    my( $class ) = @_;
+
+    return { label   => 'Eval view',
+             section => 'eval_view',
+             keys    => [ { key   => 'font',
+                            type  => 'font',
+                            label => 'Font',
+                            },
+                          ],
+             };
+}
+
+sub apply_configuration {
+    my( $self, $data ) = @_;
+
+    if( $data->{keys}[0]{value} ) {
+        my $font = Wx::Font->new( $data->{keys}[0]{value} );
+        $self->input->SetFont( $font );
+        $self->display->SetFont( $font );
+    }
 }
 
 1;
