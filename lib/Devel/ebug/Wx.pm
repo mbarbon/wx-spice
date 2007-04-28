@@ -3,10 +3,9 @@ package Devel::ebug::Wx;
 use Wx;
 
 use strict;
-use warnings;
 use base qw(Wx::Frame Devel::ebug::Wx::Service::Base Class::Accessor::Fast);
 
-our $VERSION = '0.07';
+our $VERSION = '0.08';
 
 use Wx qw(:aui wxOK);
 use Wx::Event qw(EVT_CLOSE);
