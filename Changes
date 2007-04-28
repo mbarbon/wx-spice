@@ -1,12 +1,13 @@
 Revision history for Perl extension Devel::ebug::Wx.
 
 0.08
+	- Add configuration manager service and configuration
+	  dialog to manage user-configurable options.
+	- Fix the expression and package browser views under wxWidgets 2.8.
+	- Make the eval and code display views partially configurable.
 	- Utility class for all plugins, allows declaring
 	  commands/views/services/configuration views using
 	  attributes.
-	- Add configuration manager service and configuration
-	  dialog to manage user-configurable options.
-	- Make the eval and code display views partially configurable.
 
 0.07  Sun Apr 15 17:16:47 CEST 2007
 	- Added a package/subroutine browser.
