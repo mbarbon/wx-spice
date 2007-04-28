@@ -40,7 +40,7 @@ sub new : View {
 
     $self->SetSize( $self->default_size );
 
-    $self->ebug->add_subscriber( 'load_program', sub { $self->_refresh } );
+    $self->add_subscription( $self->ebug, 'load_program', $self, '_refresh' );
 
     return $self;
 }
