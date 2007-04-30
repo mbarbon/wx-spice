@@ -1,6 +1,7 @@
 Revision history for Perl extension Devel::ebug::Wx.
 
-0.09
+0.09  Tue May  1 00:13:22 CEST 2007
+	- Avoid program crashes when hiding package browser view.
 
 0.08  Sat Apr 28 16:02:36 CEST 2007
 	- Add configuration manager service and configuration
