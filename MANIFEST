@@ -42,6 +42,7 @@ lib/Wx/Spice/Plugin.pm
 lib/Wx/Spice/Plugin/Configurable/Base.pm
 lib/Wx/Spice/Plugin/Listener/Base.pm
 lib/Wx/Spice/Service/Base.pm
+lib/Wx/Spice/Service/Configuration/Base.pm
 lib/Wx/Spice/ServiceManager.pm
 t/001_load.t
 t/a01_expressions_model.t
