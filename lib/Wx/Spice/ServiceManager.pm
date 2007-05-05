@@ -10,13 +10,13 @@ Wx::Spice::Service::ServiceManager - manage services
 
 =head1 SYNOPSIS
 
-  my $sm = $wxebug->service_manager; # or find it elsewhere
+  my $sm = ... # find a service manager instance
   my $service = $sm->get_service( $service_name );
   # use the $service
 
   # alternate ways of getting a service
-  my $srv = $wxebug->service_manager->get_service( 'foo_frobnicate' );
-  my $srv = $wxebug->foo_frobnicate_service;
+  my $srv = $sm->get_service( 'foo_frobnicate' );
+  my $srv = $sm_holder->foo_frobnicate_service;
 
 =head1 DESCRIPTION
 
@@ -28,7 +28,7 @@ C<get_service> to retrieve a service instance.
 
 =cut
 
-__PACKAGE__->mk_ro_accessors( qw(_active_services _wxebug) );
+__PACKAGE__->mk_ro_accessors( qw(_active_services) );
 
 =head2 services
 
@@ -109,7 +109,7 @@ sub maybe_call_method {
 
 =head2 finalize
 
-  $sm->finalize( $wxebug );
+  $sm->finalize;
 
 Calls C<save_configuration> on all service instances, then calls C<finalize>
 on them and sets their C<finalized> property to true.
@@ -120,7 +120,7 @@ C<finalize> has been called..
 =cut
 
 sub finalize {
-    my( $self, $wxebug ) = @_;
+    my( $self ) = @_;
 
     # distinguish between explicit and implicit state saving?
     $_->save_configuration foreach $self->active_services;
