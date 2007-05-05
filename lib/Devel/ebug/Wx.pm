@@ -5,7 +5,7 @@ use Wx;
 use strict;
 use base qw(Wx::Frame Devel::ebug::Wx::Service::Base Class::Accessor::Fast);
 
-our $VERSION = '0.09';
+our $VERSION = '0.10';
 
 use Wx qw(:aui wxOK);
 use Wx::Event qw(EVT_CLOSE);

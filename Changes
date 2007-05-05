@@ -1,5 +1,7 @@
 Revision history for Perl extension Devel::ebug::Wx.
 
+0.10
+
 0.09  Tue May  1 00:13:22 CEST 2007
 	- Avoid program crashes when hiding package browser view.
 
