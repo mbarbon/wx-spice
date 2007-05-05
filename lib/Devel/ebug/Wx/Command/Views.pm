@@ -1,7 +1,7 @@
 package Devel::ebug::Wx::Command::Views;
 
 use strict;
-use Devel::ebug::Wx::Plugin qw(:plugin);
+use Wx::Spice::Plugin qw(:plugin);
 
 sub commands : Command {
     my( $class, $wxebug ) = @_;

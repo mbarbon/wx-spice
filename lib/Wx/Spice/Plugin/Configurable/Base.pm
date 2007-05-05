@@ -1,8 +1,8 @@
-package Devel::ebug::Wx::Plugin::Configurable::Base;
+package Wx::Spice::Plugin::Configurable::Base;
 
 use strict;
 use base qw(Class::Accessor::Fast Class::Publisher
-            Devel::ebug::Wx::Plugin::Listener::Base);
+            Wx::Spice::Plugin::Listener::Base);
 
 sub register_configurable {
     my( $self ) = @_;

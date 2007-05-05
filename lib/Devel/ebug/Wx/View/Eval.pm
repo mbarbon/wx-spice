@@ -2,8 +2,8 @@ package Devel::ebug::Wx::View::Eval;
 
 use strict;
 use base qw(Wx::Panel Devel::ebug::Wx::View::Base
-            Devel::ebug::Wx::Plugin::Configurable::Base);
-use Devel::ebug::Wx::Plugin qw(:plugin);
+            Wx::Spice::Plugin::Configurable::Base);
+use Wx::Spice::Plugin qw(:plugin);
 
 __PACKAGE__->mk_accessors( qw(display input display_mode) );
 

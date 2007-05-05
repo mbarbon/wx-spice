@@ -2,7 +2,7 @@ package Devel::ebug::Wx::View::StackTrace;
 
 use strict;
 use base qw(Wx::ListBox Devel::ebug::Wx::View::Base);
-use Devel::ebug::Wx::Plugin qw(:plugin);
+use Wx::Spice::Plugin qw(:plugin);
 
 use File::Basename;
 

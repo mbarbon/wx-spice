@@ -3,15 +3,16 @@ package Devel::ebug::Wx;
 use Wx;
 
 use strict;
-use base qw(Wx::Frame Devel::ebug::Wx::Service::Base Class::Accessor::Fast);
+use base qw(Wx::Frame Wx::Spice::Service::Base Class::Accessor::Fast);
 
 our $VERSION = '0.09';
 
 use Wx qw(:aui wxOK);
 use Wx::Event qw(EVT_CLOSE);
 
-use Devel::ebug::Wx::ServiceManager;
-use Devel::ebug::Wx::ServiceManager::Holder;
+use Wx::Spice::Plugin qw(load_plugins);
+use Wx::Spice::ServiceManager;
+use Wx::Spice::ServiceManager::Holder;
 use Devel::ebug::Wx::Publisher;
 
 __PACKAGE__->mk_ro_accessors( qw(ebug) );
@@ -19,13 +20,15 @@ __PACKAGE__->mk_ro_accessors( qw(ebug) );
 sub service_name { 'ebug_wx' }
 sub initialized  { 1 }
 
+load_plugins( search_path => 'Devel::ebug::Wx::Service' );
+
 sub new {
     my( $class, $args ) = @_;
     my $self = $class->SUPER::new( undef, -1, 'wxebug', [-1, -1], [-1, 500] );
 
     EVT_CLOSE( $self, \&_on_close );
 
-    $self->service_manager( Devel::ebug::Wx::ServiceManager->new );
+    $self->service_manager( Wx::Spice::ServiceManager->new );
     $self->service_manager->add_service( Devel::ebug::Wx::Publisher->new ); # FIXME
     $self->service_manager->add_service( $self );
     $self->{ebug} = $self->ebug_publisher_service;

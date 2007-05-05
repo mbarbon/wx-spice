@@ -1,8 +1,8 @@
 package Devel::ebug::Wx::Service::ViewManager;
 
 use strict;
-use base qw(Devel::ebug::Wx::Service::Base);
-use Devel::ebug::Wx::Plugin qw(:manager :plugin);
+use base qw(Wx::Spice::Service::Base);
+use Wx::Spice::Plugin qw(:manager :plugin);
 
 =head1 NAME
 
@@ -38,13 +38,13 @@ between sessions.
 
 use Wx;
 use Wx::AUI;
-use Devel::ebug::Wx::ServiceManager::Holder;
+use Wx::Spice::ServiceManager::Holder;
 
 load_plugins( search_path => 'Devel::ebug::Wx::View' );
 
 __PACKAGE__->mk_accessors( qw(wxebug active_views manager pane_info) );
 
-sub views { Devel::ebug::Wx::Plugin->view_classes }
+sub views { Wx::Spice::Plugin->view_classes }
 
 sub service_name : Service { 'view_manager' }
 

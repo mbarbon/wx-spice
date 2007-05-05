@@ -2,7 +2,7 @@ package Devel::ebug::Wx::View::Output;
 
 use strict;
 use base qw(Wx::Panel Devel::ebug::Wx::View::Base);
-use Devel::ebug::Wx::Plugin qw(:plugin);
+use Wx::Spice::Plugin qw(:plugin);
 
 __PACKAGE__->mk_ro_accessors( qw(stdout stderr) );
 

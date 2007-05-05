@@ -1,4 +1,4 @@
-package Devel::ebug::Wx::Plugin::Listener::Base;
+package Wx::Spice::Plugin::Listener::Base;
 
 use strict;
 use base qw(Class::Accessor::Fast);

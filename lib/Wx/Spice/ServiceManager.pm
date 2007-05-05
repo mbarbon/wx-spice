@@ -1,12 +1,12 @@
-package Devel::ebug::Wx::ServiceManager;
+package Wx::Spice::ServiceManager;
 
 use strict;
 use base qw(Class::Accessor::Fast);
-use Devel::ebug::Wx::Plugin qw(:manager);
+use Wx::Spice::Plugin qw(:manager);
 
 =head1 NAME
 
-Devel::ebug::Wx::Service::ServiceManager - manage services
+Wx::Spice::Service::ServiceManager - manage services
 
 =head1 SYNOPSIS
 
@@ -28,13 +28,11 @@ C<get_service> to retrieve a service instance.
 
 =cut
 
-load_plugins( search_path => 'Devel::ebug::Wx::Service' );
-
 __PACKAGE__->mk_ro_accessors( qw(_active_services _wxebug) );
 
 =head2 services
 
-  my @service_classes = Devel::ebug::Wx::ServiceManager->services;
+  my @service_classes = Wx::Spice::ServiceManager->services;
 
 Returns a list of service classes known to the service manager.
 
@@ -47,7 +45,7 @@ Returns a list of services currently registered with the service manager.
 =cut
 
 sub active_services { @{$_[0]->_active_services} }
-sub services { Devel::ebug::Wx::Plugin->service_classes }
+sub services { Wx::Spice::Plugin->service_classes }
 sub add_service { push @{$_[0]->_active_services}, $_[1] }
 
 sub new {
@@ -62,7 +60,7 @@ sub new {
 
 =head2 initialize
 
-  $sm->initialze( $wxebug );
+  $sm->initialze;
 
 Calls C<initialize> on all service instances and sets their
 C<initialized> property to true.
@@ -160,19 +158,19 @@ sub get_service {
 
 =head1 SEE ALSO
 
-L<Devel::ebug::Wx::Service::Base>
+L<Wx::Spice::Service::Base>
 
 =cut
 
 # FIXME document
-package Devel::ebug::Wx::ServiceManager::Holder;
+package Wx::Spice::ServiceManager::Holder;
 
 use strict;
 use base qw(Exporter);
 
 our( @EXPORT, %EXPORT_TAGS );
 BEGIN {
-    $INC{'Devel/ebug/Wx/ServiceManager/Holder.pm'} = __FILE__;
+    $INC{'Wx/Spice/ServiceManager/Holder.pm'} = __FILE__;
     @EXPORT = qw(AUTOLOAD service_manager get_service);
     %EXPORT_TAGS = ( 'noautoload' => [ qw(service_manager get_service) ] );
 }

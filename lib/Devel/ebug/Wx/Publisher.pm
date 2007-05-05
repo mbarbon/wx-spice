@@ -2,9 +2,9 @@ package Devel::ebug::Wx::Publisher;
 
 use strict;
 use base qw(Class::Accessor::Fast Class::Publisher
-            Devel::ebug::Wx::Service::Base);
+            Wx::Spice::Service::Base);
 
-use Devel::ebug::Wx::ServiceManager::Holder qw(:noautoload);
+use Wx::Spice::ServiceManager::Holder qw(:noautoload);
 
 __PACKAGE__->mk_ro_accessors( qw(ebug argv script) );
 __PACKAGE__->mk_accessors( qw(_line _sub _package _file _running) );

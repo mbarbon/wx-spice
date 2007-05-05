@@ -4,7 +4,7 @@ use Wx;
 
 use strict;
 use base qw(Wx::Panel Devel::ebug::Wx::View::Base);
-use Devel::ebug::Wx::Plugin qw(:plugin);
+use Wx::Spice::Plugin qw(:plugin);
 
 # FIXME: ought to be a service, too
 __PACKAGE__->mk_accessors( qw(tree model) );

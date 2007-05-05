@@ -4,7 +4,7 @@ use Wx::AUI;
 
 use strict;
 use base qw(Wx::AuiNotebook Devel::ebug::Wx::View::Multi);
-use Devel::ebug::Wx::Plugin qw(:plugin);
+use Wx::Spice::Plugin qw(:plugin);
 
 __PACKAGE__->mk_accessors( qw(has_views) );
 

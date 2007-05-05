@@ -1,8 +1,8 @@
 package Devel::ebug::Wx::Service::CommandManager;
 
 use strict;
-use base qw(Devel::ebug::Wx::Service::Base);
-use Devel::ebug::Wx::Plugin qw(:manager :plugin);
+use base qw(Wx::Spice::Service::Base);
+use Wx::Spice::Plugin qw(:manager :plugin);
 
 load_plugins( search_path => 'Devel::ebug::Wx::Command' );
 
@@ -65,7 +65,7 @@ sub _setup_commands {
     # want to act on a single instance
     # FIXME: duplicates?
     %cmds = map $_->( $self->wxebug ),
-                Devel::ebug::Wx::Plugin->commands;
+                Wx::Spice::Plugin->commands;
     foreach my $id ( grep $cmds{$_}{key}, keys %cmds ) {
         $key_map{$cmds{$id}{key}} = $cmds{$id};
     }

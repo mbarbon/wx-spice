@@ -1,4 +1,4 @@
-package Devel::ebug::Wx::Plugin;
+package Wx::Spice::Plugin;
 
 use strict;
 use base qw(Exporter);

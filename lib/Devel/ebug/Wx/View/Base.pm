@@ -1,7 +1,7 @@
 package Devel::ebug::Wx::View::Base;
 
 use strict;
-use base qw(Class::Accessor::Fast Devel::ebug::Wx::Plugin::Listener::Base);
+use base qw(Class::Accessor::Fast Wx::Spice::Plugin::Listener::Base);
 
 __PACKAGE__->mk_accessors( qw(wxebug _has_destroy) );
 

@@ -2,7 +2,7 @@ package Devel::ebug::Wx::View::Breakpoints;
 
 use strict;
 use base qw(Wx::ScrolledWindow Devel::ebug::Wx::View::Base);
-use Devel::ebug::Wx::Plugin qw(:plugin);
+use Wx::Spice::Plugin qw(:plugin);
 
 __PACKAGE__->mk_accessors( qw(panes sizer) );
 

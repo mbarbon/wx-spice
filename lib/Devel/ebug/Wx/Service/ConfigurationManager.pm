@@ -1,9 +1,9 @@
 package Devel::ebug::Wx::Service::ConfigurationManager;
 
 use strict;
-use base qw(Devel::ebug::Wx::Service::Base);
-use Devel::ebug::Wx::Plugin qw(:plugin);
-use Devel::ebug::Wx::ServiceManager::Holder;
+use base qw(Wx::Spice::Service::Base);
+use Wx::Spice::Plugin qw(:plugin);
+use Wx::Spice::ServiceManager::Holder;
 
 __PACKAGE__->mk_accessors( qw(_configurations) );
 
@@ -14,11 +14,11 @@ my %configurators;
 sub initialize {
     my( $self, $manager ) = @_;
 
-    foreach my $class ( Devel::ebug::Wx::Plugin->configuration_classes ) {
+    foreach my $class ( Wx::Spice::Plugin->configuration_classes ) {
         $configurators{$class->tag} = $class;
     }
     my @configurations;
-    foreach my $configurable ( Devel::ebug::Wx::Plugin->configurables ) {
+    foreach my $configurable ( Wx::Spice::Plugin->configurables ) {
         my $cfg = $configurable->();
         $cfg->{configurator_class} = $configurators{$cfg->{configurator}};
         push @configurations, $cfg;

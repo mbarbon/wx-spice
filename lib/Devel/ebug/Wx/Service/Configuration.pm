@@ -1,8 +1,8 @@
 package Devel::ebug::Wx::Service::Configuration;
 
 use strict;
-use base qw(Devel::ebug::Wx::Service::Base);
-use Devel::ebug::Wx::Plugin qw(:plugin);
+use base qw(Wx::Spice::Service::Base);
+use Wx::Spice::Plugin qw(:plugin);
 
 =head1 NAME
 
