@@ -19,13 +19,7 @@ services.
 
 sub service_name : Service { 'configuration' }
 
-sub file_name {
-    my( $class ) = @_;
-    my $dir = File::UserConfig->new( dist     => 'ebug_wx',
-                                     sharedir => '.',
-                                     )->configdir;
-
-    return File::Spec->catfile( $dir, 'ebug_wx.ini' );
-}
+sub directory_name { 'ebug_wx' }
+sub file_name      { 'ebug_wx.ini' }
 
 1;

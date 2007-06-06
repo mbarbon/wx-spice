@@ -6,10 +6,23 @@ use Wx::Spice::Plugin qw(:plugin);
 
 =head1 NAME
 
-Wx::Spice::Service::Configuration - manage Spice configuration
+Wx::Spice::Service::Configuration::Base - manage configuration for components
 
 =head1 SYNOPSIS
 
+  # define the configuration service
+  package MyApp::Service::Configuration;
+
+  use strict;
+  use base qw(Wx::Spice::Service::Configuration::Base);
+  use Wx::Spice::Plugin qw(:plugin);
+
+  sub service_name : Service { 'configuration' }
+
+  sub directory_name { 'my_app' }
+  sub file_name      { 'global.ini' }
+
+  # in other parts of the program
   my $cm = ...->get_service( 'configuration' );
   my $cfg = $cm->get_config( 'service_name' );
 
@@ -35,11 +48,20 @@ use File::Spec;
 sub initialized  { 1 }
 sub finalized    { 0 }
 
+sub file_path {
+    my( $class ) = @_;
+    my $dir = File::UserConfig->new( dist     => $class->directory_name,
+                                     sharedir => '.',
+                                     )->configdir;
+
+    return File::Spec->catfile( $dir, $class->file_name );
+}
+
 sub new {
     my( $class ) = @_;
     my $self = $class->SUPER::new( { inifiles => {} } );
 
-    $self->{default_file} = $class->file_name;
+    $self->{default_file} = $class->file_path;
     _load_inifile( $self, $self->default_file );
 
     return $self;
