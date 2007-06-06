@@ -38,11 +38,13 @@ lib/Devel/ebug/Wx/View/Notebook.pm
 lib/Devel/ebug/Wx/View/Output.pm
 lib/Devel/ebug/Wx/View/PackageBrowser.pm
 lib/Devel/ebug/Wx/View/StackTrace.pm
+lib/Wx/Spice.pm
 lib/Wx/Spice/Plugin.pm
 lib/Wx/Spice/Plugin/Configurable/Base.pm
 lib/Wx/Spice/Plugin/Listener/Base.pm
 lib/Wx/Spice/Service/Base.pm
 lib/Wx/Spice/Service/Configuration/Base.pm
+lib/Wx/Spice/Service/SizeKeeper.pm
 lib/Wx/Spice/ServiceManager.pm
 t/001_load.t
 t/a01_expressions_model.t
