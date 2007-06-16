@@ -43,9 +43,11 @@ lib/Wx/Spice/Plugin.pm
 lib/Wx/Spice/Plugin/Configurable/Base.pm
 lib/Wx/Spice/Plugin/Listener/Base.pm
 lib/Wx/Spice/Service/Base.pm
+lib/Wx/Spice/Service/CommandManager.pm
 lib/Wx/Spice/Service/Configuration/Base.pm
 lib/Wx/Spice/Service/SizeKeeper.pm
 lib/Wx/Spice/ServiceManager.pm
+lib/Wx/Spice/UI/Events.pm
 t/001_load.t
 t/a01_expressions_model.t
 t/zzz_pod.t
