@@ -185,7 +185,8 @@ our $AUTOLOAD;
 sub AUTOLOAD {
     my $self = shift;
     return if $AUTOLOAD =~ /::DESTROY$/;
-    ( my $sub = $AUTOLOAD ) =~ s/.*::(\w+)_service$/$1/;
+    ( my $sub = $AUTOLOAD ) =~ s/.*::(\w+)_service$/$1/
+      or die "Invalid method $AUTOLOAD called";
     return $self->get_service( $1 );
 }
 
