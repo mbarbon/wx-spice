@@ -33,28 +33,28 @@ sub commands : Command {
 }
 
 sub quit {
-    my( $wx ) = @_;
+    my( $sm ) = @_;
 
-    $wx->Close;
+    $sm->ebug_wx_service->Close;
 }
 
 sub about {
-    my( $wx ) = @_;
+    my( $sm ) = @_;
 
     my $message = sprintf <<EOT,
 ebug_wx %s, (c) 2007 Mattia Barbon
 wxPerl %s, %s
 EOT
         Devel::ebug::Wx->VERSION, $Wx::VERSION, wxVERSION_STRING;
-    Wx::MessageBox( $message, "About wxebug", wxOK, $wx );
+    Wx::MessageBox( $message, "About wxebug", wxOK, $sm->ebug_wx_service );
 }
 
 sub load_file {
-    my( $wx ) = @_;
+    my( $sm ) = @_;
     # FIXME better file selector, add arguments
     my $file = Wx::FileSelector( "Select a Perl file" );
     if( defined $file ) {
-        $wx->ebug->load_program( [ $file ] );
+        $sm->ebug_publisher_service->load_program( [ $file ] );
     }
 }
 

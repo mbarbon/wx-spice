@@ -3,10 +3,11 @@ package Devel::ebug::Wx::Service::CommandManager;
 use strict;
 use base qw(Wx::Spice::Service::Base);
 use Wx::Spice::Plugin qw(:manager :plugin);
+use Wx::Spice::ServiceManager::Holder;
 
 load_plugins( search_path => 'Devel::ebug::Wx::Command' );
 
-__PACKAGE__->mk_accessors( qw(wxebug key_map _menu_tree) );
+__PACKAGE__->mk_accessors( qw(key_map _menu_tree) );
 
 use Wx qw(:menu);
 use Wx::Event qw(EVT_MENU EVT_UPDATE_UI);
@@ -16,20 +17,20 @@ sub service_name : Service { 'command_manager' }
 sub initialize {
     my( $self, $manager ) = @_;
 
-    $self->{wxebug} = $manager->get_service( 'ebug_wx' );
     ( $self->{key_map}, $self->{_menu_tree} ) = $self->_setup_commands;
 }
 
 sub get_menu_bar {
-    my( $self ) = @_;
+    my( $self, $window ) = @_;
 
-    return $self->_build_menu( $self->_menu_tree );
+    return $self->_build_menu( $window, $self->_menu_tree );
 }
 
 sub _build_menu {
-    my( $self, $menu_tree ) = @_;
+    my( $self, $window, $menu_tree ) = @_;
 
     my $mbar = Wx::MenuBar->new;
+    my $sm = $self->service_manager;
 
     foreach my $rv ( sort { $a->{priority} <=> $b->{priority} }
                           values %$menu_tree ) {
@@ -45,9 +46,9 @@ sub _build_menu {
                             $item->{label};
             my $style = $item->{checkable} ? wxITEM_CHECK : wxITEM_NORMAL;
             my $mitem = $menu->Append( -1, $label, '', $style );
-            EVT_MENU( $self->wxebug, $mitem, $item->{sub} );
+            EVT_MENU( $window, $mitem, sub { $item->{sub}->( $sm ) } );
             if( $item->{update_menu} ) {
-                EVT_UPDATE_UI( $self->wxebug, $mitem, $item->{update_menu} );
+                EVT_UPDATE_UI( $window, $mitem, $item->{update_menu} );
             }
             $prev_pri = $item->{priority};
         }
@@ -61,10 +62,8 @@ sub _setup_commands {
     my( $self ) = @_;
     my( %key_map, %menu_tree, %cmds );
 
-    # passing $wxebug here is correct because a command might
-    # want to act on a single instance
     # FIXME: duplicates?
-    %cmds = map $_->( $self->wxebug ),
+    %cmds = map $_->( $self->service_manager ),
                 Wx::Spice::Plugin->commands;
     foreach my $id ( grep $cmds{$_}{key}, keys %cmds ) {
         $key_map{$cmds{$id}{key}} = $cmds{$id};
@@ -91,7 +90,7 @@ sub handle_key {
     my $char = chr( $code );
 
     if( my $cmd = $self->key_map->{$char} ) {
-        $cmd->{sub}->( $self->wxebug );
+        $cmd->{sub}->( $self->service_manager );
     }
 }
 

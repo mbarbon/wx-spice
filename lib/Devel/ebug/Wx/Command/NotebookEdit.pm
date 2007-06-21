@@ -4,7 +4,7 @@ use strict;
 use Wx::Spice::Plugin qw(:plugin);
 
 sub command : Command {
-    my( $class, $wxebug ) = @_;
+    my( $class, $sm ) = @_;
 
     return ( 'edit_notebook',
              { sub         => \&_edit_notebook,
@@ -39,8 +39,8 @@ sub _valid_views {
 }
 
 sub _edit_notebook {
-    my( $wx ) = @_;
-    my $vm = $wx->view_manager_service;
+    my( $sm ) = @_;
+    my( $vm, $wx ) = ( $sm->view_manager_service, $sm->ebug_wx_service );
     my @nbs = _notebooks( $vm );
     my $nb_index = Wx::GetSingleChoiceIndex
       ( 'Choose the notebook you want to add views to',
@@ -57,9 +57,9 @@ sub _edit_notebook {
 }
 
 sub _update_edit_notebook {
-    my( $wx, $event ) = @_;
+    my( $sm, $event ) = @_;
 
-    my $vm = $wx->view_manager_service;
+    my $vm = $sm->view_manager_service;
     $event->Enable( _notebooks( $vm ) && _valid_views( $vm ) ? 1 : 0 );
 }
 

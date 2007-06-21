@@ -35,7 +35,7 @@ sub show_configuration {
 }
 
 sub command : Command {
-    my( $class, $wxebug ) = @_;
+    my( $class, $sm ) = @_;
 
     return ( 'configure',
              { sub         => \&_configure,
@@ -47,9 +47,9 @@ sub command : Command {
 }
 
 sub _configure {
-    my( $wx ) = @_;
-    my $cm = $wx->configuration_manager_service;
-    $cm->show_configuration( $wx );
+    my( $sm ) = @_;
+    my $cm = $sm->configuration_manager_service;
+    $cm->show_configuration( $sm->ebug_wx_service );
 }
 
 package Devel::ebug::Wx::Service::ConfigurationManager::Dialog;

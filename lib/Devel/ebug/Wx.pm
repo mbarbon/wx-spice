@@ -39,7 +39,7 @@ sub new {
     $self->ebug->add_subscriber( 'load_program', $self, '_pgm_load' );
     $self->ebug->add_subscriber( 'finished', $self, '_pgm_stop' );
 
-    $self->SetMenuBar( $self->command_manager_service->get_menu_bar );
+    $self->SetMenuBar( $self->command_manager_service->get_menu_bar( $self ) );
 
     $self->ebug->load_program( $args->{argv} );
 

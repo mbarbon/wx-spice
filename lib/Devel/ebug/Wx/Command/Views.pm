@@ -4,14 +4,15 @@ use strict;
 use Wx::Spice::Plugin qw(:plugin);
 
 sub commands : Command {
-    my( $class, $wxebug ) = @_;
+    my( $class, $sm ) = @_;
     my @commands;
 
-    my $viewmanager = $wxebug->view_manager_service;
+    my $viewmanager = $sm->view_manager_service;
     foreach my $view ( $viewmanager->views ) {
         my $tag = $view->tag;
         my $cmd = sub {
-            my( $wx ) = @_;
+            my( $sm ) = @_;
+            my $wx = $sm->ebug_wx_service;
 
             # show if present, recreate if not present
             if( $viewmanager->has_view( $tag ) ) {
@@ -30,7 +31,7 @@ sub commands : Command {
             }
         };
         my $update_ui = sub {
-            my( $wx, $event ) = @_;
+            my( $sm, $event ) = @_;
 
             $event->Check( $viewmanager->is_shown( $tag ) );
         };
