@@ -156,6 +156,9 @@ sub get_service {
     return $service;
 }
 
+# FIXME maybe a bit brutal...
+*AUTOLOAD = *Wx::Spice::ServiceManager::Holder::AUTOLOAD;
+
 =head1 SEE ALSO
 
 L<Wx::Spice::Service::Base>
