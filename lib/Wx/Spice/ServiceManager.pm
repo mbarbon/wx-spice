@@ -147,6 +147,7 @@ sub get_service {
                                  $self->active_services;
 
     # @rest can be nonempty only if two clashing services exist
+    die "Service $name not found" unless $service;
     unless( $service->initialized ) {
         $service->service_manager( $self )
           if $service->can( 'service_manager' );
