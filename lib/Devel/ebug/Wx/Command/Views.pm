@@ -3,7 +3,7 @@ package Devel::ebug::Wx::Command::Views;
 use strict;
 use Wx::Spice::Plugin qw(:plugin);
 
-sub commands : Command {
+sub commands : MenuCommand {
     my( $class, $sm ) = @_;
     my @commands;
 

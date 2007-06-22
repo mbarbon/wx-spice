@@ -22,7 +22,7 @@ sub MODIFY_CODE_ATTRIBUTES {
     my( @known, @unknown );
 
     foreach ( @attrs ) {
-        /^(?:Service|Command|View|Configuration|Configurable)\s*(?:$|\()/ ?
+        /^(?:Service|Command|View|Configuration|Configurable|MenuCommand)\s*(?:$|\()/ ?
           push @known, $_ : push @unknown, $_;
     }
 

@@ -4,15 +4,16 @@ use strict;
 use base qw(Wx::Spice::Service::Base);
 use Wx::Spice::Plugin qw(:manager :plugin);
 use Wx::Spice::ServiceManager::Holder;
+use Wx::Spice::Service::CommandManager;
 
 load_plugins( search_path => 'Devel::ebug::Wx::Command' );
 
 __PACKAGE__->mk_accessors( qw(key_map _menu_tree) );
 
 use Wx qw(:menu);
-use Wx::Event qw(EVT_MENU EVT_UPDATE_UI);
+use Wx::Spice::UI::Events qw(EVT_SPICE_MENU EVT_SPICE_UPDATE_UI);
 
-sub service_name : Service { 'command_manager' }
+sub service_name : Service { 'menu_command_manager' }
 
 sub initialize {
     my( $self, $manager ) = @_;
@@ -46,9 +47,9 @@ sub _build_menu {
                             $item->{label};
             my $style = $item->{checkable} ? wxITEM_CHECK : wxITEM_NORMAL;
             my $mitem = $menu->Append( -1, $label, '', $style );
-            EVT_MENU( $window, $mitem, sub { $item->{sub}->( $sm ) } );
+            EVT_SPICE_MENU( $window, $mitem, $sm, $item->{id} );
             if( $item->{update_menu} ) {
-                EVT_UPDATE_UI( $window, $mitem, $item->{update_menu} );
+                EVT_SPICE_UPDATE_UI( $window, $mitem, $sm, $item->{update_menu} );
             }
             $prev_pri = $item->{priority};
         }
@@ -64,7 +65,11 @@ sub _setup_commands {
 
     # FIXME: duplicates?
     %cmds = map $_->( $self->service_manager ),
-                Wx::Spice::Plugin->commands;
+                Wx::Spice::Plugin->menucommands;
+    my $cm = $self->command_manager_service;
+    foreach my $id ( keys %cmds ) {
+        $cm->add_command( $id, $cmds{$id} );
+    }
     foreach my $id ( grep $cmds{$_}{key}, keys %cmds ) {
         $key_map{$cmds{$id}{key}} = $cmds{$id};
     }
@@ -78,6 +83,7 @@ sub _setup_commands {
         die "Unknown menu: $cmds{$id}{menu}"
           unless $menu_tree{$cmds{$id}{menu}};
         push @{$menu_tree{$cmds{$id}{menu}}{childs}}, { priority => 0,
+                                                        id       => $id,
                                                         %{$cmds{$id}},
                                                         };
     }

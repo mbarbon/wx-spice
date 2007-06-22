@@ -22,6 +22,13 @@ sub initialize {
     $self->{commands} = \%cmds;
 }
 
+sub add_command {
+    my( $self, $tag, $command ) = @_;
+
+    # FIXME: duplicates?
+    $self->{commands}{$tag} = $command;
+}
+
 sub send_command {
     my( $self, $command, @args ) = @_;
 

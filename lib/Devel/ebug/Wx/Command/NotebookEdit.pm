@@ -3,7 +3,7 @@ package Devel::ebug::Wx::Command::NotebookEdit;
 use strict;
 use Wx::Spice::Plugin qw(:plugin);
 
-sub command : Command {
+sub command : MenuCommand {
     my( $class, $sm ) = @_;
 
     return ( 'edit_notebook',

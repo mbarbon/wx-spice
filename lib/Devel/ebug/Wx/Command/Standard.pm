@@ -5,7 +5,7 @@ use Wx::Spice::Plugin qw(:plugin);
 
 use Wx qw(wxOK wxVERSION_STRING);
 
-sub commands : Command {
+sub commands : MenuCommand {
     return
       ( file_menu => { tag      => 'file',
                        label    => 'File',

@@ -34,7 +34,7 @@ sub show_configuration {
     $dlg->Show;
 }
 
-sub command : Command {
+sub command : MenuCommand {
     my( $class, $sm ) = @_;
 
     return ( 'configure',

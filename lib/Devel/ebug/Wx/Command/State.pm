@@ -6,7 +6,7 @@ use Wx::Spice::Plugin qw(:plugin);
 use Wx qw(:filedialog);
 use File::Basename qw(basename dirname);
 
-sub register_commands : Command {
+sub register_commands : MenuCommand {
     return
       ( save_state => { sub      => \&save_program_state,
                         menu     => 'file',

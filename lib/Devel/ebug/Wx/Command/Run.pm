@@ -3,7 +3,7 @@ package Devel::ebug::Wx::Command::Run;
 use strict;
 use Wx::Spice::Plugin qw(:plugin);
 
-sub commands : Command {
+sub commands : MenuCommand {
     return
       ( run_menu => { tag      => 'run',
                       label    => 'Run',

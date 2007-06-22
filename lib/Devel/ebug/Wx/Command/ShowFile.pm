@@ -5,7 +5,7 @@ use Wx::Spice::Plugin qw(:plugin);
 
 use Wx qw(:id);
 
-sub commands : Command {
+sub commands : MenuCommand {
     return
       ( view_menu => { tag      => 'view',
                        label    => 'View',
