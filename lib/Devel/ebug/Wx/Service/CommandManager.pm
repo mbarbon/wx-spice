@@ -11,7 +11,8 @@ load_plugins( search_path => 'Devel::ebug::Wx::Command' );
 __PACKAGE__->mk_accessors( qw(key_map _menu_tree) );
 
 use Wx qw(:menu);
-use Wx::Spice::UI::Events qw(EVT_SPICE_MENU EVT_SPICE_UPDATE_UI);
+use Wx::Spice::UI::Events qw(EVT_SPICE_MENU EVT_SPICE_UPDATE_UI
+                             EVT_SPICE_UPDATE_UI_ENABLE);
 
 sub service_name : Service { 'menu_command_manager' }
 
@@ -48,8 +49,11 @@ sub _build_menu {
             my $style = $item->{checkable} ? wxITEM_CHECK : wxITEM_NORMAL;
             my $mitem = $menu->Append( -1, $label, '', $style );
             EVT_SPICE_MENU( $window, $mitem, $sm, $item->{id} );
-            if( $item->{update_menu} ) {
-                EVT_SPICE_UPDATE_UI( $window, $mitem, $sm, $item->{update_menu} );
+            my $update = $item->{update_menu};
+            if( $update && $update eq 'enable' ) {
+                EVT_SPICE_UPDATE_UI_ENABLE( $window, $mitem, $sm, $item->{id} );
+            } elsif( $update && ref( $update ) && ref( $update ) eq 'CODE' ) {
+                EVT_SPICE_UPDATE_UI( $window, $mitem, $sm, $update );
             }
             $prev_pri = $item->{priority};
         }
@@ -67,7 +71,7 @@ sub _setup_commands {
     %cmds = map $_->( $self->service_manager ),
                 Wx::Spice::Plugin->menucommands;
     my $cm = $self->command_manager_service;
-    foreach my $id ( keys %cmds ) {
+    foreach my $id ( grep !$cmds{$_}{id}, keys %cmds ) {
         $cm->add_command( $id, $cmds{$id} );
     }
     foreach my $id ( grep $cmds{$_}{key}, keys %cmds ) {
