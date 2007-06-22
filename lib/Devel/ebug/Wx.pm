@@ -12,6 +12,7 @@ use Wx::Event qw(EVT_CLOSE);
 
 use Wx::Spice::Plugin qw(load_plugins);
 use Wx::Spice::ServiceManager;
+use Wx::Spice::Service::MenuCommandManager;
 use Wx::Spice::ServiceManager::Holder;
 use Devel::ebug::Wx::Publisher;
 
@@ -21,6 +22,7 @@ sub service_name { 'ebug_wx' }
 sub initialized  { 1 }
 
 load_plugins( search_path => 'Devel::ebug::Wx::Service' );
+load_plugins( search_path => 'Devel::ebug::Wx::Command' );
 
 sub new {
     my( $class, $args ) = @_;
