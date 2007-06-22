@@ -1,12 +1,10 @@
-package Devel::ebug::Wx::Service::CommandManager;
+package Wx::Spice::Service::MenuCommandManager;
 
 use strict;
 use base qw(Wx::Spice::Service::Base);
 use Wx::Spice::Plugin qw(:manager :plugin);
 use Wx::Spice::ServiceManager::Holder;
 use Wx::Spice::Service::CommandManager;
-
-load_plugins( search_path => 'Devel::ebug::Wx::Command' );
 
 __PACKAGE__->mk_accessors( qw(key_map _menu_tree) );
 
