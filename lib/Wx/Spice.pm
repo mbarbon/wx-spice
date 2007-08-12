@@ -6,7 +6,7 @@ our $VERSION = '0.01';
 
 =head1 NAME
 
-Wx::Spice::Service::Configuration::Base - manage configuration for components
+Wx::Spice - the Spice GUI application framework 
 
 =head1 SYNOPSIS
 
