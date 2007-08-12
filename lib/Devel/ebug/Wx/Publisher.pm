@@ -76,6 +76,21 @@ sub is_running {
     return $self->argv && !$self->ebug->finished;
 }
 
+sub set_ebug {
+    my( $self, $ebug, $argv ) = @_;
+
+    $self->{argv} = $argv || [];
+    $self->{script} = $self->argv->[0];
+    $self->{ebug} = $ebug;
+
+    $self->_running( 1 );
+    $self->notify_subscribers( 'load_program',
+                               argv      => $self->argv,
+                               filename  => 'remote',
+                               );
+    $self->_notify_basic_changes;
+}
+
 sub load_program {
     my( $self, $argv ) = @_;
     $self->{argv} = $argv || $self->{argv} || [];
@@ -88,8 +103,8 @@ sub load_program {
 
     $self->ebug->program( $filename );
     $self->ebug->load;
-    $self->_running( 1 );
 
+    $self->_running( 1 );
     $self->notify_subscribers( 'load_program',
                                argv      => $self->argv,
                                filename  => $filename,
