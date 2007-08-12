@@ -1,4 +1,4 @@
-package Devel::ebug::Wx::Service::ConfigurationManager;
+package Wx::Spice::Service::ConfigurationManager;
 
 use strict;
 use base qw(Wx::Spice::Service::Base);
@@ -29,30 +29,12 @@ sub initialize {
 sub show_configuration {
     my( $self, $parent ) = @_;
 
-    my $dlg = Devel::ebug::Wx::Service::ConfigurationManager::Dialog
+    my $dlg = Wx::Spice::Service::ConfigurationManager::Dialog
       ->new( $parent, $self );
     $dlg->Show;
 }
 
-sub command : MenuCommand {
-    my( $class, $sm ) = @_;
-
-    return ( 'configure',
-             { sub         => \&_configure,
-               menu        => 'view',
-               label       => 'Configure',
-               priority    => 600,
-               },
-             );
-}
-
-sub _configure {
-    my( $sm ) = @_;
-    my $cm = $sm->configuration_manager_service;
-    $cm->show_configuration( $sm->ebug_wx_service );
-}
-
-package Devel::ebug::Wx::Service::ConfigurationManager::Dialog;
+package Wx::Spice::Service::ConfigurationManager::Dialog;
 
 use strict;
 use base qw(Wx::Frame Class::Accessor::Fast);

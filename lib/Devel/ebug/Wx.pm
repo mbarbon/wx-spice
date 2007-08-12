@@ -13,6 +13,8 @@ use Wx::Event qw(EVT_CLOSE);
 use Wx::Spice::Plugin qw(load_plugins);
 use Wx::Spice::ServiceManager;
 use Wx::Spice::Service::MenuCommandManager;
+use Wx::Spice::Service::ConfigurationManager;
+use Wx::Spice::View::Configuration::Simple;
 use Wx::Spice::ServiceManager::Holder;
 use Devel::ebug::Wx::Publisher;
 
@@ -131,6 +133,8 @@ disable commands/etc when they do not make sense
 command returns a (subscribable) handle that can be used to
   poll/listen to changes
 explict use of update_ui is an hack!
+
+=item * better way to define configuration views
 
 =item * break on subroutine, undo, watchpoints
 

@@ -1,4 +1,4 @@
-package Devel::ebug::Wx::View::Configuration::Simple;
+package Wx::Spice::View::Configuration::Simple;
 
 use strict;
 use base qw(Wx::Panel Class::Accessor::Fast);
