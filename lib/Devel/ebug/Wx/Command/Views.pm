@@ -3,6 +3,9 @@ package Devel::ebug::Wx::Command::Views;
 use strict;
 use Wx::Spice::Plugin qw(:plugin);
 
+use Wx::Spice::Command::EditNotebookViews;
+use Wx::Spice::Command::ShowView;
+
 sub commands : MenuCommand {
     my( $class, $sm ) = @_;
     my @commands;
@@ -10,33 +13,13 @@ sub commands : MenuCommand {
     my $viewmanager = $sm->view_manager_service;
     foreach my $view ( $viewmanager->views ) {
         my $tag = $view->tag;
-        my $cmd = sub {
-            my( $sm ) = @_;
-            my $parent = $viewmanager->main_window;
-
-            # show if present, recreate if not present
-            if( $viewmanager->has_view( $tag ) ) {
-                if( $viewmanager->is_shown( $tag ) ) {
-                    $viewmanager->hide_view( $tag );
-                } else {
-                    $viewmanager->show_view( $tag );
-                }
-            } else {
-                my $instance = $view->new( $parent, $sm );
-                $viewmanager->create_pane_and_update
-                  ( $instance, { name    => $instance->tag, # for multiviews
-                                 float   => 1,
-                                 caption => $instance->description,
-                                 } );
-            }
-        };
         my $update_ui = sub {
             my( $sm, $event ) = @_;
 
             $event->Check( $viewmanager->is_shown( $tag ) );
         };
-        push @commands, 'show_' . $tag,
-             { sub         => $cmd,
+        push @commands, 'show_' . $tag . '_view',
+             { id          => 'show_' . $tag . '_view',
                menu        => 'view',
                update_menu => $update_ui,
                checkable   => 1,
@@ -44,6 +27,13 @@ sub commands : MenuCommand {
                priority    => 200,
                };
     }
+    push @commands, 'edit_notebook_views',
+         { id          => 'edit_notebook_views',
+           menu        => 'view',
+           update_menu => \&Wx::Spice::Command::EditNotebookViews::can_enable_command,
+           label       => 'Edit notebooks',
+           priority    => 300,
+           };
 
     return @commands;
 }

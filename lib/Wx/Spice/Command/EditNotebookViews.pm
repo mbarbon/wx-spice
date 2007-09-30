@@ -1,18 +1,12 @@
-package Devel::ebug::Wx::Command::NotebookEdit;
+package Wx::Spice::Command::EditNotebookViews;
 
 use strict;
 use Wx::Spice::Plugin qw(:plugin);
 
-sub command : MenuCommand {
+sub command : Command {
     my( $class, $sm ) = @_;
 
-    return ( 'edit_notebook',
-             { sub         => \&_edit_notebook,
-               menu        => 'view',
-               update_menu => \&_update_edit_notebook,
-               label       => 'Edit notebooks',
-               priority    => 300,
-               },
+    return ( 'edit_notebook_views' => { sub => \&_edit_notebook }
              );
 }
 
@@ -57,11 +51,11 @@ sub _edit_notebook {
     $nbs[$nb_index]->add_view( $views[$_] ) foreach @chs;
 }
 
-sub _update_edit_notebook {
+sub can_enable_command {
     my( $sm, $event ) = @_;
 
     my $vm = $sm->view_manager_service;
-    $event->Enable( _notebooks( $vm ) && _valid_views( $vm ) ? 1 : 0 );
+    return _notebooks( $vm ) && _valid_views( $vm ) ? 1 : 0;
 }
 
 1;

@@ -16,7 +16,6 @@ lib/Devel/ebug/Plugin/SymbolBrowser.pm
 lib/Devel/ebug/Plugin/Wx.pm
 lib/Devel/ebug/Wx.pm
 lib/Devel/ebug/Wx/Command/Configure.pm
-lib/Devel/ebug/Wx/Command/NotebookEdit.pm
 lib/Devel/ebug/Wx/Command/Run.pm
 lib/Devel/ebug/Wx/Command/ShowFile.pm
 lib/Devel/ebug/Wx/Command/Standard.pm
@@ -31,12 +30,12 @@ lib/Devel/ebug/Wx/View/Breakpoints.pm
 lib/Devel/ebug/Wx/View/Code/STC.pm
 lib/Devel/ebug/Wx/View/Eval.pm
 lib/Devel/ebug/Wx/View/Expressions.pm
-lib/Devel/ebug/Wx/View/Multi.pm
-lib/Devel/ebug/Wx/View/Notebook.pm
 lib/Devel/ebug/Wx/View/Output.pm
 lib/Devel/ebug/Wx/View/PackageBrowser.pm
 lib/Devel/ebug/Wx/View/StackTrace.pm
 lib/Wx/Spice.pm
+lib/Wx/Spice/Command/EditNotebookViews.pm
+lib/Wx/Spice/Command/ShowView.pm
 lib/Wx/Spice/Plugin.pm
 lib/Wx/Spice/Plugin/Configurable/Base.pm
 lib/Wx/Spice/Plugin/Listener/Base.pm
@@ -51,6 +50,8 @@ lib/Wx/Spice/ServiceManager.pm
 lib/Wx/Spice/UI/Events.pm
 lib/Wx/Spice/View/Base.pm
 lib/Wx/Spice/View/Configuration/Simple.pm
+lib/Wx/Spice/View/Multi.pm
+lib/Wx/Spice/View/Notebook.pm
 t/001_load.t
 t/a01_expressions_model.t
 t/zzz_pod.t
