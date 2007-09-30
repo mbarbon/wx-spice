@@ -25,7 +25,7 @@ lib/Devel/ebug/Wx/Command/Views.pm
 lib/Devel/ebug/Wx/Publisher.pm
 lib/Devel/ebug/Wx/Service/CodeDisplay.pm
 lib/Devel/ebug/Wx/Service/Configuration.pm
-lib/Devel/ebug/Wx/Service/ViewManager.pm
+lib/Devel/ebug/Wx/Service/RemoteDebugger.pm
 lib/Devel/ebug/Wx/View/Base.pm
 lib/Devel/ebug/Wx/View/Breakpoints.pm
 lib/Devel/ebug/Wx/View/Code/STC.pm
@@ -46,8 +46,10 @@ lib/Wx/Spice/Service/Configuration/Base.pm
 lib/Wx/Spice/Service/ConfigurationManager.pm
 lib/Wx/Spice/Service/MenuCommandManager.pm
 lib/Wx/Spice/Service/SizeKeeper.pm
+lib/Wx/Spice/Service/ViewManager.pm
 lib/Wx/Spice/ServiceManager.pm
 lib/Wx/Spice/UI/Events.pm
+lib/Wx/Spice/View/Base.pm
 lib/Wx/Spice/View/Configuration/Simple.pm
 t/001_load.t
 t/a01_expressions_model.t
