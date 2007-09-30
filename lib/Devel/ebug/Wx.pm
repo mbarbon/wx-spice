@@ -14,6 +14,7 @@ use Wx::Spice::Plugin qw(load_plugins);
 use Wx::Spice::ServiceManager;
 use Wx::Spice::Service::MenuCommandManager;
 use Wx::Spice::Service::ConfigurationManager;
+use Wx::Spice::Service::ViewManager;
 use Wx::Spice::View::Configuration::Simple;
 use Wx::Spice::ServiceManager::Holder;
 use Devel::ebug::Wx::Publisher;
@@ -27,7 +28,7 @@ load_plugins( search_path => 'Devel::ebug::Wx::Service' );
 load_plugins( search_path => 'Devel::ebug::Wx::Command' );
 load_plugins( search_path => 'Devel::ebug::Wx::View' );
 
-Devel::ebug::Wx::Service::ViewManager->set_main_window_service( 'ebug_wx' );
+Wx::Spice::Service::ViewManager->set_main_window_service( 'ebug_wx' );
 
 sub new {
     my( $class, $args ) = @_;

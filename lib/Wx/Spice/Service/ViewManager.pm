@@ -1,4 +1,4 @@
-package Devel::ebug::Wx::Service::ViewManager;
+package Wx::Spice::Service::ViewManager;
 
 use strict;
 use base qw(Wx::Spice::Service::Base);
@@ -6,11 +6,11 @@ use Wx::Spice::Plugin qw(:manager :plugin);
 
 =head1 NAME
 
-Devel::ebug::Wx::Service::ViewManager - manage view docking/undocking
+Wx::Spice::Service::ViewManager - manage view docking/undocking
 
 =head1 SYNOPSIS
 
-  Devel::ebug::Wx::Service::ViewManager->set_main_window_service( 'my_app' );
+  Wx::Spice::Service::ViewManager->set_main_window_service( 'my_app' );
 
   my $vm = ...->get_service( 'view_manager' );
   my $bool = $vm->has_view( $tag );
@@ -24,7 +24,7 @@ Devel::ebug::Wx::Service::ViewManager - manage view docking/undocking
                              } );
   $vm->create_pane_and_update( ... ); # like ->create_pane()
 
-  my @view_classes = Devel::ebug::Wx::Service::ViewManager->views;
+  my @view_classes = Wx::Spice::Service::ViewManager->views;
 
 =head1 DESCRIPTION
 
@@ -286,7 +286,7 @@ sub is_shown {
 
 =head2 views
 
-    my @view_classes = Devel::ebug::Wx::Service::ViewManager->views;
+    my @view_classes = Wx::Spice::Service::ViewManager->views;
 
 Returns a list of view classes known to the view manager.
 
