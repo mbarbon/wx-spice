@@ -16,6 +16,7 @@ use Wx::Spice::Service::MenuCommandManager;
 use Wx::Spice::Service::ConfigurationManager;
 use Wx::Spice::Service::ViewManager;
 use Wx::Spice::View::Configuration::Simple;
+use Wx::Spice::View::Notebook;
 use Wx::Spice::ServiceManager::Holder;
 use Devel::ebug::Wx::Publisher;
 

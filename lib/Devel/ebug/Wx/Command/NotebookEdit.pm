@@ -20,7 +20,7 @@ sub _notebooks {
     my( $vm ) = @_;
 
     my @nbs = sort { $a->description cmp $b->description }
-              grep $_->isa( 'Devel::ebug::Wx::View::Notebook' ),
+              grep $_->isa( 'Wx::Spice::View::Notebook' ),
                    $vm->active_views_list;
     return @nbs;
 }
@@ -31,7 +31,7 @@ sub _valid_views {
     my @views;
     foreach my $view ( $vm->views ) {
         next if $vm->is_shown( $view->tag );
-        next if $view->isa( 'Devel::ebug::Wx::View::Notebook' );
+        next if $view->isa( 'Wx::Spice::View::Notebook' );
         push @views, $view;
     }
 

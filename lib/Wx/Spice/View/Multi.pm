@@ -1,7 +1,7 @@
-package Devel::ebug::Wx::View::Multi;
+package Wx::Spice::View::Multi;
 
 use strict;
-use base qw(Devel::ebug::Wx::View::Base);
+use base qw(Wx::Spice::View::Base);
 
 __PACKAGE__->mk_accessors( qw(_tag _index) );
 
@@ -23,7 +23,7 @@ sub tag {
     return $tag_base unless ref $self;
     return $self->_tag if $self->_tag;
     # generate an unused tag
-    my $vm = $self->wxebug->view_manager_service;
+    my $vm = $self->view_manager_service;
     for( my $index = 1; $index < 1000; ++$index ) {
         my $tag = $tag_base . $index;
         next if $vm->has_view( $tag );
