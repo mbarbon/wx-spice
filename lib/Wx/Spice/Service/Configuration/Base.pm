@@ -168,7 +168,7 @@ sub get_serialized_value {
     my( $self, $name, $default ) = @_;
 
     my @values = $self->get_value( $name, undef );
-    return $default unless @values;
+    return $default unless @values && defined $values[0];
     my $undumped = eval {
         YAML::Load( join "\n", @values, '' );
     };

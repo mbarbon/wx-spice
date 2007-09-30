@@ -18,7 +18,7 @@ sub register_window {
 
     my $cfg = $self->configuration_service->get_config( 'window_size_keeper' );
     my( @xywh ) = split ',', $cfg->get_value( "${name}_geometry", ',,,' );
-    if( length $xywh[0] ) {
+    if( @xywh && $xywh[0] && length $xywh[0] ) {
         $window->SetSize( @xywh );
     }
 
