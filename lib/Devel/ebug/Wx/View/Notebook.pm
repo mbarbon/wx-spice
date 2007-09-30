@@ -15,12 +15,12 @@ sub tag_base         { 'notebook' }
 sub description_base { 'Notebook' }
 
 sub new : View {
-    my( $class, $parent, $wxebug, $layout_state ) = @_;
+    my( $class, $parent, $sm, $layout_state ) = @_;
     my $self = $class->SUPER::new( $parent, -1, [-1, -1], [-1, -1],
                                    wxAUI_NB_TAB_MOVE|wxAUI_NB_CLOSE_BUTTON|
                                    wxAUI_NB_WINDOWLIST_BUTTON );
 
-    $self->wxebug( $wxebug );
+    $self->wxebug( $sm->ebug_wx_service );
     $self->SetSize( $self->default_size );
 
     $self->AddPage( Wx::StaticText->new( $self, -1,

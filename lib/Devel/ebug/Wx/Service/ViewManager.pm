@@ -10,6 +10,8 @@ Devel::ebug::Wx::Service::ViewManager - manage view docking/undocking
 
 =head1 SYNOPSIS
 
+  Devel::ebug::Wx::Service::ViewManager->set_main_window_service( 'my_app' );
+
   my $vm = ...->get_service( 'view_manager' );
   my $bool = $vm->has_view( $tag );
   $vm->register_view( $view );
@@ -39,10 +41,17 @@ between sessions.
 use Wx;
 use Wx::AUI;
 use Wx::Spice::ServiceManager::Holder;
+use Wx::Spice::Service::SizeKeeper;
 
-load_plugins( search_path => 'Devel::ebug::Wx::View' );
+__PACKAGE__->mk_accessors( qw(main_window active_views manager pane_info) );
 
-__PACKAGE__->mk_accessors( qw(wxebug active_views manager pane_info) );
+# this creates a dependency, but having a 'main_window' service would
+# be a bit over-engineered
+{
+    my $main_window = 'main_window';
+    sub set_main_window_service { $main_window = $_[1] }
+    sub get_main_window_service { $main_window }
+}
 
 sub views { Wx::Spice::Plugin->view_classes }
 
@@ -51,12 +60,12 @@ sub service_name : Service { 'view_manager' }
 sub initialize {
     my( $self, $manager ) = @_;
 
-    $self->wxebug( $manager->get_service( 'ebug_wx' ) );
+    $self->main_window( $manager->get_service( get_main_window_service() ) );
     $self->manager( Wx::AuiManager->new );
     $self->active_views( {} );
     $self->views; # force loading of views
 
-    $self->manager->SetManagedWindow( $self->wxebug );
+    $self->manager->SetManagedWindow( $self->main_window );
 
     # default Pane Info
     $self->{pane_info} = Wx::AuiPaneInfo->new
@@ -69,12 +78,10 @@ sub save_configuration {
     my( $self ) = @_;
 
     my $cfg = $self->configuration_service->get_config( 'view_manager' );
-    my( @xywh ) = ( $self->wxebug->GetPositionXY, $self->wxebug->GetSizeWH );
     $cfg->set_value( 'aui_perspective', $self->manager->SavePerspective );
     $cfg->set_serialized_value( 'views', [ map  $_->get_layout_state,
                                            grep $_->is_managed,
                                                 $self->active_views_list ] );
-    $cfg->set_value( 'frame_geometry', sprintf '%d,%d,%d,%d', @xywh );
 }
 
 sub load_configuration {
@@ -86,8 +93,8 @@ sub load_configuration {
     my $profile = $cfg->get_value( 'aui_perspective', '' );
     my $views = $cfg->get_serialized_value( 'views', [] );
     foreach my $view ( @$views ) {
-        my $instance = $view->{class}->new( $self->wxebug, $self->wxebug,
-                                            $view );
+        my $instance = $view->{class}->new( $self->main_window,
+                                            $self->service_manager, $view );
         my $pane_info = $self->pane_info->Name( $instance->tag )
             ->DestroyOnClose( 0 );
         $pane_info->DestroyOnClose( 1 ) unless Wx->VERSION > 0.67;
@@ -103,10 +110,8 @@ sub load_configuration {
                         grep !$self->is_shown( $_->tag ),
                              $self->active_views_list;
 
-    my( @xywh ) = split ',', $cfg->get_value( 'frame_geometry', ',,,' );
-    if( length $xywh[0] ) {
-        $self->wxebug->SetSize( @xywh );
-    }
+    $self->window_size_keeper_service->register_window( 'viewmanager',
+                                                        $self->main_window );
 
     $self->manager->Update;
 }

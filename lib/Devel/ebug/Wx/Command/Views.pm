@@ -12,7 +12,7 @@ sub commands : MenuCommand {
         my $tag = $view->tag;
         my $cmd = sub {
             my( $sm ) = @_;
-            my $wx = $sm->ebug_wx_service;
+            my $parent = $viewmanager->main_window;
 
             # show if present, recreate if not present
             if( $viewmanager->has_view( $tag ) ) {
@@ -22,7 +22,7 @@ sub commands : MenuCommand {
                     $viewmanager->show_view( $tag );
                 }
             } else {
-                my $instance = $view->new( $wx, $wx );
+                my $instance = $view->new( $parent, $sm );
                 $viewmanager->create_pane_and_update
                   ( $instance, { name    => $instance->tag, # for multiviews
                                  float   => 1,

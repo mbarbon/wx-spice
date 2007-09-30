@@ -32,10 +32,10 @@ sub _call_on_idle($&) {
 }
 
 sub new : View {
-    my( $class, $parent, $wxebug, $layout_state ) = @_;
+    my( $class, $parent, $sm, $layout_state ) = @_;
     my $self = $class->SUPER::new( $parent, -1 );
 
-    $self->wxebug( $wxebug );
+    $self->wxebug( $sm->ebug_wx_service );
     my $tree = Wx::TreeCtrl->new( $self, -1, [-1,-1], [-1,-1],
                                        wxTR_HIDE_ROOT | wxTR_HAS_BUTTONS |
                                        wxTR_EDIT_LABELS );

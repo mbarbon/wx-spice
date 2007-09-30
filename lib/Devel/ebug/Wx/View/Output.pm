@@ -13,10 +13,10 @@ sub tag         { 'output' }
 sub description { 'Console output' }
 
 sub new : View {
-    my( $class, $parent, $wxebug, $layout_state ) = @_;
+    my( $class, $parent, $sm, $layout_state ) = @_;
     my $self = $class->SUPER::new( $parent, -1 );
 
-    $self->wxebug( $wxebug );
+    $self->wxebug( $sm->ebug_wx_service );
     $self->{stdout} = Wx::TextCtrl->new( $self, -1, "", [-1,-1], [-1, -1],
                                          wxTE_MULTILINE|wxTE_READONLY );
     $self->{stderr} = Wx::TextCtrl->new( $self, -1, "", [-1,-1], [-1,-1],
@@ -37,7 +37,7 @@ sub new : View {
     $sz->Add( $self->stderr, 1, wxGROW );
     $self->SetSizer( $sz );
 
-    $self->load_output if $wxebug->ebug->is_running;
+    $self->load_output if $self->wxebug->ebug->is_running;
 
     EVT_BUTTON( $self, $refresh, sub { $self->load_output } );
 

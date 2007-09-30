@@ -13,10 +13,10 @@ sub tag         { 'stack' }
 sub description { 'Stack' }
 
 sub new : View {
-    my( $class, $parent, $wxebug, $layout_state ) = @_;
+    my( $class, $parent, $sm, $layout_state ) = @_;
     my $self = $class->SUPER::new( $parent, -1 );
 
-    $self->wxebug( $wxebug );
+    $self->wxebug( $sm->ebug_wx_service );
     $self->set_stacktrace if $self->ebug->line;
 
     $self->subscribe_ebug( 'state_changed', sub { $self->_read_stack( @_ ) } );

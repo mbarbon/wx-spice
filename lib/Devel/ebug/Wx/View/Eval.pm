@@ -14,10 +14,10 @@ sub tag         { 'eval' }
 sub description { 'Eval' }
 
 sub new : View {
-    my( $class, $parent, $wxebug, $layout_state ) = @_;
+    my( $class, $parent, $sm, $layout_state ) = @_;
     my $self = $class->SUPER::new( $parent, -1 );
 
-    $self->wxebug( $wxebug );
+    $self->wxebug( $sm->ebug_wx_service );
     $self->{input} = Wx::TextCtrl->new( $self, -1, "", [-1,-1], [-1,-1],
                                         wxTE_MULTILINE );
     $self->{display} = Wx::TextCtrl->new( $self, -1, "", [-1,-1], [-1, -1],

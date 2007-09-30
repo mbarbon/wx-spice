@@ -40,7 +40,8 @@ sub _valid_views {
 
 sub _edit_notebook {
     my( $sm ) = @_;
-    my( $vm, $wx ) = ( $sm->view_manager_service, $sm->ebug_wx_service );
+    my $vm = $sm->view_manager_service;
+    my $wx = $vm->main_window;
     my @nbs = _notebooks( $vm );
     my $nb_index = Wx::GetSingleChoiceIndex
       ( 'Choose the notebook you want to add views to',

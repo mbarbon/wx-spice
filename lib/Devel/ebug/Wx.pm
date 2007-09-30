@@ -25,6 +25,9 @@ sub initialized  { 1 }
 
 load_plugins( search_path => 'Devel::ebug::Wx::Service' );
 load_plugins( search_path => 'Devel::ebug::Wx::Command' );
+load_plugins( search_path => 'Devel::ebug::Wx::View' );
+
+Devel::ebug::Wx::Service::ViewManager->set_main_window_service( 'ebug_wx' );
 
 sub new {
     my( $class, $args ) = @_;
