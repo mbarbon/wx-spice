@@ -38,6 +38,10 @@ sub start_server {
     return if $self->is_listening;
     my $sock = Wx::SocketServer->new( 'localhost', $self->port,
                                       wxSOCKET_WAITALL|8 );
+    if( !$sock->Ok ) {
+        warn "Failed to create server";
+        return;
+    }
 
     my $on_connect = sub {
         my( $sock, undef, $evt ) = @_;
