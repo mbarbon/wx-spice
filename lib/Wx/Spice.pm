@@ -33,6 +33,11 @@ L<Wx::Spice::ServiceManager>, L<Wx>, L<Devel::ebug::Wx>
 
 Mattia Barbon, C<< <mbarbon@cpan.org> >>
 
+=head1 SOURCES
+
+The latest sources can be found on GitHub at
+L<http://github.com/mbarbon/wx-spice/tree>
+
 =head1 COPYRIGHT
 
 Copyright (C) 2007, Mattia Barbon
