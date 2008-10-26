@@ -1,10 +1,10 @@
 package Devel::ebug::Wx::Service::CodeDisplay;
 
 use strict;
-use base qw(Devel::ebug::Wx::Service::Base);
-use Devel::ebug::Wx::Plugin qw(:plugin);
+use base qw(Wx::Spice::Service::Base);
+use Wx::Spice::Plugin qw(:plugin);
 
-use Devel::ebug::Wx::ServiceManager::Holder;
+use Wx::Spice::ServiceManager::Holder;
 use Devel::ebug::Wx::View::Code::STC;
 
 __PACKAGE__->mk_accessors( qw(code_display) );

@@ -1,11 +1,11 @@
 package Devel::ebug::Wx::Command::ShowFile;
 
 use strict;
-use Devel::ebug::Wx::Plugin qw(:plugin);
+use Wx::Spice::Plugin qw(:plugin);
 
 use Wx qw(:id);
 
-sub commands : Command {
+sub commands : MenuCommand {
     return
       ( view_menu => { tag      => 'view',
                        label    => 'View',
@@ -20,13 +20,13 @@ sub commands : Command {
 }
 
 sub show_file {
-    my( $wx ) = @_;
-    my $files = [ $wx->ebug->filenames ];
+    my( $sm ) = @_;
+    my $files = [ $sm->ebug_publisher_service->filenames ];
     my $dlg = Wx::SingleChoiceDialog->new
-      ( $wx, "File to display", "Choose a file", $files );
+      ( $sm->ebug_wx_service, "File to display", "Choose a file", $files );
 
     if( $dlg->ShowModal == wxID_OK ) {
-        $wx->code_display_service->show_code_for_file( $dlg->GetStringSelection );
+        $sm->code_display_service->show_code_for_file( $dlg->GetStringSelection );
     }
 
     $dlg->Destroy;

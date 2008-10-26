@@ -1,10 +1,11 @@
-package Devel::ebug::Wx::View::Notebook;
+package Wx::Spice::View::Notebook;
 
 use Wx::AUI;
 
 use strict;
-use base qw(Wx::AuiNotebook Devel::ebug::Wx::View::Multi);
-use Devel::ebug::Wx::Plugin qw(:plugin);
+use base qw(Wx::AuiNotebook Wx::Spice::View::Multi);
+use Wx::Spice::Plugin qw(:plugin);
+use Wx::Spice::ServiceManager::Holder;
 
 __PACKAGE__->mk_accessors( qw(has_views) );
 
@@ -15,12 +16,13 @@ sub tag_base         { 'notebook' }
 sub description_base { 'Notebook' }
 
 sub new : View {
-    my( $class, $parent, $wxebug, $layout_state ) = @_;
+    my( $class, $parent, $sm, $layout_state ) = @_;
     my $self = $class->SUPER::new( $parent, -1, [-1, -1], [-1, -1],
                                    wxAUI_NB_TAB_MOVE|wxAUI_NB_CLOSE_BUTTON|
                                    wxAUI_NB_WINDOWLIST_BUTTON );
 
-    $self->wxebug( $wxebug );
+    $self->service_manager( $sm );
+
     $self->SetSize( $self->default_size );
 
     $self->AddPage( Wx::StaticText->new( $self, -1,
@@ -34,7 +36,7 @@ sub new : View {
 
 sub add_view {
     my( $self, $view ) = @_;
-    my $instance = $self->wxebug->view_manager_service->get_view( $view->tag );
+    my $instance = $self->view_manager_service->get_view( $view->tag );
 
     if( !$self->has_views ) {
         $self->DeletePage( 0 );
@@ -43,7 +45,7 @@ sub add_view {
     if( $instance ) {
         $instance->Destroy;
     }
-    $instance = $view->new( $self, $self->wxebug );
+    $instance = $view->new( $self, $self->view_manager_service->main_window );
     $self->AddPage( $instance, $instance->description );
     $self->has_views( 1 );
 }
@@ -69,7 +71,7 @@ sub set_layout_state {
     $self->DeletePage( 0 ); # FIXME use non ad-hoc handling...
 
     foreach my $subview ( @{$state->{notebook} || []} ) {
-        my $instance = $subview->{class}->new( $self, $self->wxebug,
+        my $instance = $subview->{class}->new( $self, $self->view_manager_service->service_manager,
                                                $subview );
         $self->AddPage( $instance, $instance->description );
         $self->has_views( 1 );

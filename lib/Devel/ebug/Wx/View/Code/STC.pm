@@ -6,8 +6,8 @@ use Wx::STC;
 #       and a simple code-edit/display control
 use strict;
 use base qw(Wx::StyledTextCtrl Devel::ebug::Wx::View::Base
-            Devel::ebug::Wx::Plugin::Configurable::Base);
-use Devel::ebug::Wx::Plugin qw(:plugin);
+            Wx::Spice::Plugin::Configurable::Base);
+use Wx::Spice::Plugin qw(:plugin);
 
 __PACKAGE__->mk_accessors( qw(filename line highlighted_line) );
 
@@ -149,7 +149,7 @@ sub _setup_stc {
     # FIXME: move to code display service
     EVT_STC_MARGINCLICK( $self, $self, sub { $self->_set_bp( $_[1] ) } );
     EVT_CHAR( $self, sub {
-                  $self->wxebug->command_manager_service->handle_key( $_[1]->GetKeyCode );
+                  $self->wxebug->menu_command_manager_service->handle_key( $_[1]->GetKeyCode );
               } );
     # FIXME add context menu
     EVT_RIGHT_UP( $self, sub {

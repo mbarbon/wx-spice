@@ -1,18 +1,12 @@
-package Devel::ebug::Wx::Command::NotebookEdit;
+package Wx::Spice::Command::EditNotebookViews;
 
 use strict;
-use Devel::ebug::Wx::Plugin qw(:plugin);
+use Wx::Spice::Plugin qw(:plugin);
 
 sub command : Command {
-    my( $class, $wxebug ) = @_;
+    my( $class, $sm ) = @_;
 
-    return ( 'edit_notebook',
-             { sub         => \&_edit_notebook,
-               menu        => 'view',
-               update_menu => \&_update_edit_notebook,
-               label       => 'Edit notebooks',
-               priority    => 300,
-               },
+    return ( 'edit_notebook_views' => { sub => \&_edit_notebook }
              );
 }
 
@@ -20,7 +14,7 @@ sub _notebooks {
     my( $vm ) = @_;
 
     my @nbs = sort { $a->description cmp $b->description }
-              grep $_->isa( 'Devel::ebug::Wx::View::Notebook' ),
+              grep $_->isa( 'Wx::Spice::View::Notebook' ),
                    $vm->active_views_list;
     return @nbs;
 }
@@ -31,7 +25,7 @@ sub _valid_views {
     my @views;
     foreach my $view ( $vm->views ) {
         next if $vm->is_shown( $view->tag );
-        next if $view->isa( 'Devel::ebug::Wx::View::Notebook' );
+        next if $view->isa( 'Wx::Spice::View::Notebook' );
         push @views, $view;
     }
 
@@ -39,8 +33,9 @@ sub _valid_views {
 }
 
 sub _edit_notebook {
-    my( $wx ) = @_;
-    my $vm = $wx->view_manager_service;
+    my( $sm ) = @_;
+    my $vm = $sm->view_manager_service;
+    my $wx = $vm->main_window;
     my @nbs = _notebooks( $vm );
     my $nb_index = Wx::GetSingleChoiceIndex
       ( 'Choose the notebook you want to add views to',
@@ -56,11 +51,11 @@ sub _edit_notebook {
     $nbs[$nb_index]->add_view( $views[$_] ) foreach @chs;
 }
 
-sub _update_edit_notebook {
-    my( $wx, $event ) = @_;
+sub can_enable_command {
+    my( $sm, $event ) = @_;
 
-    my $vm = $wx->view_manager_service;
-    $event->Enable( _notebooks( $vm ) && _valid_views( $vm ) ? 1 : 0 );
+    my $vm = $sm->view_manager_service;
+    return _notebooks( $vm ) && _valid_views( $vm ) ? 1 : 0;
 }
 
 1;

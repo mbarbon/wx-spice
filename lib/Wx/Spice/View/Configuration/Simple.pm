@@ -1,8 +1,8 @@
-package Devel::ebug::Wx::View::Configuration::Simple;
+package Wx::Spice::View::Configuration::Simple;
 
 use strict;
 use base qw(Wx::Panel Class::Accessor::Fast);
-use Devel::ebug::Wx::Plugin qw(:plugin);
+use Wx::Spice::Plugin qw(:plugin);
 
 __PACKAGE__->mk_ro_accessors( qw(attributes _controls) );
 

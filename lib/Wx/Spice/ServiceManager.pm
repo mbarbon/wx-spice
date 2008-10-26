@@ -1,22 +1,22 @@
-package Devel::ebug::Wx::ServiceManager;
+package Wx::Spice::ServiceManager;
 
 use strict;
 use base qw(Class::Accessor::Fast);
-use Devel::ebug::Wx::Plugin qw(:manager);
+use Wx::Spice::Plugin qw(:manager);
 
 =head1 NAME
 
-Devel::ebug::Wx::Service::ServiceManager - manage services
+Wx::Spice::Service::ServiceManager - manage services
 
 =head1 SYNOPSIS
 
-  my $sm = $wxebug->service_manager; # or find it elsewhere
+  my $sm = ... # find a service manager instance
   my $service = $sm->get_service( $service_name );
   # use the $service
 
   # alternate ways of getting a service
-  my $srv = $wxebug->service_manager->get_service( 'foo_frobnicate' );
-  my $srv = $wxebug->foo_frobnicate_service;
+  my $srv = $sm->get_service( 'foo_frobnicate' );
+  my $srv = $sm_holder->foo_frobnicate_service;
 
 =head1 DESCRIPTION
 
@@ -28,13 +28,11 @@ C<get_service> to retrieve a service instance.
 
 =cut
 
-load_plugins( search_path => 'Devel::ebug::Wx::Service' );
-
-__PACKAGE__->mk_ro_accessors( qw(_active_services _wxebug) );
+__PACKAGE__->mk_ro_accessors( qw(_active_services) );
 
 =head2 services
 
-  my @service_classes = Devel::ebug::Wx::ServiceManager->services;
+  my @service_classes = Wx::Spice::ServiceManager->services;
 
 Returns a list of service classes known to the service manager.
 
@@ -47,7 +45,7 @@ Returns a list of services currently registered with the service manager.
 =cut
 
 sub active_services { @{$_[0]->_active_services} }
-sub services { Devel::ebug::Wx::Plugin->service_classes }
+sub services { Wx::Spice::Plugin->service_classes }
 sub add_service { push @{$_[0]->_active_services}, $_[1] }
 
 sub new {
@@ -62,7 +60,7 @@ sub new {
 
 =head2 initialize
 
-  $sm->initialze( $wxebug );
+  $sm->initialze;
 
 Calls C<initialize> on all service instances and sets their
 C<initialized> property to true.
@@ -111,7 +109,7 @@ sub maybe_call_method {
 
 =head2 finalize
 
-  $sm->finalize( $wxebug );
+  $sm->finalize;
 
 Calls C<save_configuration> on all service instances, then calls C<finalize>
 on them and sets their C<finalized> property to true.
@@ -122,7 +120,7 @@ C<finalize> has been called..
 =cut
 
 sub finalize {
-    my( $self, $wxebug ) = @_;
+    my( $self ) = @_;
 
     # distinguish between explicit and implicit state saving?
     $_->save_configuration foreach $self->active_services;
@@ -149,6 +147,7 @@ sub get_service {
                                  $self->active_services;
 
     # @rest can be nonempty only if two clashing services exist
+    die "Service $name not found" unless $service;
     unless( $service->initialized ) {
         $service->service_manager( $self )
           if $service->can( 'service_manager' );
@@ -158,21 +157,24 @@ sub get_service {
     return $service;
 }
 
+# FIXME maybe a bit brutal...
+*AUTOLOAD = *Wx::Spice::ServiceManager::Holder::AUTOLOAD;
+
 =head1 SEE ALSO
 
-L<Devel::ebug::Wx::Service::Base>
+L<Wx::Spice::Service::Base>
 
 =cut
 
 # FIXME document
-package Devel::ebug::Wx::ServiceManager::Holder;
+package Wx::Spice::ServiceManager::Holder;
 
 use strict;
 use base qw(Exporter);
 
 our( @EXPORT, %EXPORT_TAGS );
 BEGIN {
-    $INC{'Devel/ebug/Wx/ServiceManager/Holder.pm'} = __FILE__;
+    $INC{'Wx/Spice/ServiceManager/Holder.pm'} = __FILE__;
     @EXPORT = qw(AUTOLOAD service_manager get_service);
     %EXPORT_TAGS = ( 'noautoload' => [ qw(service_manager get_service) ] );
 }
@@ -187,7 +189,8 @@ our $AUTOLOAD;
 sub AUTOLOAD {
     my $self = shift;
     return if $AUTOLOAD =~ /::DESTROY$/;
-    ( my $sub = $AUTOLOAD ) =~ s/.*::(\w+)_service$/$1/;
+    ( my $sub = $AUTOLOAD ) =~ s/.*::(\w+)_service$/$1/
+      or die "Invalid method $AUTOLOAD called";
     return $self->get_service( $1 );
 }
 

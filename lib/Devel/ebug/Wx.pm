@@ -3,15 +3,21 @@ package Devel::ebug::Wx;
 use Wx;
 
 use strict;
-use base qw(Wx::Frame Devel::ebug::Wx::Service::Base Class::Accessor::Fast);
+use base qw(Wx::Frame Wx::Spice::Service::Base Class::Accessor::Fast);
 
 our $VERSION = '0.10';
 
 use Wx qw(:aui wxOK);
 use Wx::Event qw(EVT_CLOSE);
 
-use Devel::ebug::Wx::ServiceManager;
-use Devel::ebug::Wx::ServiceManager::Holder;
+use Wx::Spice::Plugin qw(load_plugins);
+use Wx::Spice::ServiceManager;
+use Wx::Spice::Service::MenuCommandManager;
+use Wx::Spice::Service::ConfigurationManager;
+use Wx::Spice::Service::ViewManager;
+use Wx::Spice::View::Configuration::Simple;
+use Wx::Spice::View::Notebook;
+use Wx::Spice::ServiceManager::Holder;
 use Devel::ebug::Wx::Publisher;
 
 __PACKAGE__->mk_ro_accessors( qw(ebug) );
@@ -19,13 +25,19 @@ __PACKAGE__->mk_ro_accessors( qw(ebug) );
 sub service_name { 'ebug_wx' }
 sub initialized  { 1 }
 
+load_plugins( search_path => 'Devel::ebug::Wx::Service' );
+load_plugins( search_path => 'Devel::ebug::Wx::Command' );
+load_plugins( search_path => 'Devel::ebug::Wx::View' );
+
+Wx::Spice::Service::ViewManager->set_main_window_service( 'ebug_wx' );
+
 sub new {
     my( $class, $args ) = @_;
     my $self = $class->SUPER::new( undef, -1, 'wxebug', [-1, -1], [-1, 500] );
 
     EVT_CLOSE( $self, \&_on_close );
 
-    $self->service_manager( Devel::ebug::Wx::ServiceManager->new );
+    $self->service_manager( Wx::Spice::ServiceManager->new );
     $self->service_manager->add_service( Devel::ebug::Wx::Publisher->new ); # FIXME
     $self->service_manager->add_service( $self );
     $self->{ebug} = $self->ebug_publisher_service;
@@ -36,7 +48,7 @@ sub new {
     $self->ebug->add_subscriber( 'load_program', $self, '_pgm_load' );
     $self->ebug->add_subscriber( 'finished', $self, '_pgm_stop' );
 
-    $self->SetMenuBar( $self->command_manager_service->get_menu_bar );
+    $self->SetMenuBar( $self->menu_command_manager_service->get_menu_bar( $self ) );
 
     $self->ebug->load_program( $args->{argv} );
 
@@ -126,6 +138,8 @@ disable commands/etc when they do not make sense
 command returns a (subscribable) handle that can be used to
   poll/listen to changes
 explict use of update_ui is an hack!
+
+=item * better way to define configuration views
 
 =item * break on subroutine, undo, watchpoints
 

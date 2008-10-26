@@ -1,9 +1,9 @@
-package Devel::ebug::Wx::Service::ConfigurationManager;
+package Wx::Spice::Service::ConfigurationManager;
 
 use strict;
-use base qw(Devel::ebug::Wx::Service::Base);
-use Devel::ebug::Wx::Plugin qw(:plugin);
-use Devel::ebug::Wx::ServiceManager::Holder;
+use base qw(Wx::Spice::Service::Base);
+use Wx::Spice::Plugin qw(:plugin);
+use Wx::Spice::ServiceManager::Holder;
 
 __PACKAGE__->mk_accessors( qw(_configurations) );
 
@@ -14,11 +14,11 @@ my %configurators;
 sub initialize {
     my( $self, $manager ) = @_;
 
-    foreach my $class ( Devel::ebug::Wx::Plugin->configuration_classes ) {
+    foreach my $class ( Wx::Spice::Plugin->configuration_classes ) {
         $configurators{$class->tag} = $class;
     }
     my @configurations;
-    foreach my $configurable ( Devel::ebug::Wx::Plugin->configurables ) {
+    foreach my $configurable ( Wx::Spice::Plugin->configurables ) {
         my $cfg = $configurable->();
         $cfg->{configurator_class} = $configurators{$cfg->{configurator}};
         push @configurations, $cfg;
@@ -29,30 +29,12 @@ sub initialize {
 sub show_configuration {
     my( $self, $parent ) = @_;
 
-    my $dlg = Devel::ebug::Wx::Service::ConfigurationManager::Dialog
+    my $dlg = Wx::Spice::Service::ConfigurationManager::Dialog
       ->new( $parent, $self );
     $dlg->Show;
 }
 
-sub command : Command {
-    my( $class, $wxebug ) = @_;
-
-    return ( 'configure',
-             { sub         => \&_configure,
-               menu        => 'view',
-               label       => 'Configure',
-               priority    => 600,
-               },
-             );
-}
-
-sub _configure {
-    my( $wx ) = @_;
-    my $cm = $wx->configuration_manager_service;
-    $cm->show_configuration( $wx );
-}
-
-package Devel::ebug::Wx::Service::ConfigurationManager::Dialog;
+package Wx::Spice::Service::ConfigurationManager::Dialog;
 
 use strict;
 use base qw(Wx::Frame Class::Accessor::Fast);

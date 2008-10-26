@@ -1,8 +1,8 @@
-package Devel::ebug::Wx::Plugin::Configurable::Base;
+package Wx::Spice::Plugin::Configurable::Base;
 
 use strict;
 use base qw(Class::Accessor::Fast Class::Publisher
-            Devel::ebug::Wx::Plugin::Listener::Base);
+            Wx::Spice::Plugin::Listener::Base);
 
 sub register_configurable {
     my( $self ) = @_;
@@ -20,7 +20,7 @@ sub configuration_changed {
 
 sub set_configuration {
     my( $class, $sm, $data ) = @_;
-    my $cfg = $sm->get_service( 'configuration' )
+    my $cfg = $sm->configuration_service
                  ->get_config( $data->{section} );
 
     foreach my $key ( @{$data->{keys}} ) {
@@ -32,7 +32,7 @@ sub set_configuration {
 sub get_configuration {
     my( $class, $sm ) = @_;
     my $keys = $class->get_configuration_keys;
-    my $cfg = $sm->get_service( 'configuration' )
+    my $cfg = $sm->configuration_service
                  ->get_config( $keys->{section} );
     my $use_defaults = 1;
 
