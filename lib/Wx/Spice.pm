@@ -2,7 +2,7 @@ package Wx::Spice;
 
 use strict;
 
-our $VERSION = '0.01';
+our $VERSION = '0.10';
 
 =head1 NAME
 

@@ -1,8 +1,10 @@
-Revision history for Perl extension Devel::ebug::Wx.
+Revision history for Perl extension Wx::Spice.
 
 0.10
-	- Split potentially reusable code into Wx::Spice.
-	- Add remote debugging support (requires patched Devel::ebug).
+	- First public release.
+	- Separated the potentially reusable code from Devel::ebug::Wx.
+
+Revision history for Perl extension Devel::ebug::Wx.
 
 0.09  Tue May  1 00:13:22 CEST 2007
 	- Avoid program crashes when hiding package browser view.

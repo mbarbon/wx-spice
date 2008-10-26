@@ -37,4 +37,4 @@
 #   Mac OSX SMB mount metadata files
 \B\._
 # Avoid archives of this distribution
-\bDevel-ebug-Wx-[\d\.\_]+
+\bWx-Spice-[\d\.\_]+
